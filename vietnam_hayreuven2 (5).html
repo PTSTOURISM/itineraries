@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>וייטנאם פנורמה 2026 | PTS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#162D52;--card:#1D3660;--gold:#C9A84C;--goldl:#F0D080;--border:rgba(201,168,76,0.22);--w:#F0F4F8;--mt:rgba(240,244,248,0.55);--red:#E94560;--green:#2ECC71;--blue:#3498DB;--teal:#1ABC9C;--orange:#E67E22;--purple:#9B59B6;}
+html,body{height:100%;background:var(--bg);color:var(--w);font-family:'Segoe UI','Arial Hebrew',Arial,sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,#1D3E78,#1660B8);border-bottom:2px solid var(--gold);padding:calc(10px + env(safe-area-inset-top,0px)) 12px 8px;flex-shrink:0;}
+.hdr-r1{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.pts{background:#fff;border-radius:6px;padding:4px 9px 3px;flex-shrink:0;}
+.pts-n{font-family:'Arial Black',Impact,sans-serif;font-size:17px;font-weight:900;color:#2D3748;font-style:italic;line-height:1;}
+.pts-s{font-size:5px;color:#2BBDD8;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-top:1px;}
+.hdr-c{flex:1;text-align:center;}
+.htitle{font-size:13px;font-weight:800;color:var(--gold);line-height:1.2;}
+.hdate{font-size:8.5px;color:var(--mt);margin-top:1px;line-height:1.3;}
+.chip{background:var(--gold);color:#1A1000;padding:4px 8px;border-radius:11px;font-size:9px;font-weight:800;white-space:nowrap;flex-shrink:0;text-align:center;line-height:1.35;}
+.prog{display:flex;gap:2px;padding:0 1px;margin-top:4px;}
+.pd{flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer;}
+.pd.a{background:var(--gold);}
+
+/* Nav */
+.nav{display:flex;overflow-x:auto;gap:4px;padding:7px 10px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);scrollbar-width:none;flex-shrink:0;}
+.nav::-webkit-scrollbar{display:none;}
+.nb{flex-shrink:0;padding:6px 11px;border-radius:13px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,0.7);font-size:10.5px;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.nb.a{background:var(--gold);color:#1A1000;font-weight:700;border-color:var(--gold);}
+
+/* Scrollable content */
+.sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:11px 11px calc(11px + env(safe-area-inset-bottom,0px));}
+
+/* Day header */
+.dh{background:linear-gradient(135deg,#1D3E78,#1660B8);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:11px;}
+.dnr{display:flex;align-items:baseline;gap:7px;margin-bottom:3px;}
+.dn{font-size:30px;font-weight:900;color:var(--gold);opacity:.2;line-height:1;}
+.dt{font-size:14px;font-weight:800;color:var(--w);flex:1;line-height:1.3;}
+.dd{font-size:12px;font-weight:800;color:var(--gold);margin-top:4px;}
+.dl{font-size:10px;color:var(--mt);margin-top:2px;}
+
+/* Timeline */
+.tl{position:relative;padding-right:23px;}
+.tl::before{content:'';position:absolute;right:8px;top:0;bottom:0;width:1.5px;background:linear-gradient(to bottom,var(--gold),transparent);}
+.ev{position:relative;margin-bottom:8px;background:var(--card);border:1px solid var(--border);border-right:2.5px solid var(--gold);border-radius:9px;padding:9px 11px;}
+.ev::before{content:'';position:absolute;right:-18px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--gold);border:1.5px solid var(--bg);}
+.ev.transfer{border-right-color:var(--blue)}.ev.transfer::before{background:var(--blue)}
+.ev.activity{border-right-color:var(--teal)}.ev.activity::before{background:var(--teal)}
+.ev.meal{border-right-color:var(--green)}.ev.meal::before{background:var(--green)}
+.ev.flight{border-right-color:var(--red)}.ev.flight::before{background:var(--red)}
+.ev.cruise{border-right-color:var(--purple)}.ev.cruise::before{background:var(--purple)}
+.ev.spa{border-right-color:var(--orange)}.ev.spa::before{background:var(--orange)}
+.ev.note{border-right-color:rgba(255,255,255,.12);background:rgba(0,0,0,.18)}.ev.note::before{background:rgba(255,255,255,.3)}
+.et{display:flex;align-items:center;gap:6px;margin-bottom:2px;}
+.ei{font-size:14px;flex-shrink:0;}
+.en{font-size:12px;font-weight:700;color:var(--w);flex:1;line-height:1.3;}
+.etime{font-size:9.5px;color:var(--gold);font-weight:700;background:rgba(201,168,76,.12);padding:2px 6px;border-radius:7px;white-space:nowrap;direction:ltr;flex-shrink:0;}
+.ed{font-size:10.5px;color:var(--mt);line-height:1.5;margin-top:3px;}
+.el{display:inline-block;margin-top:5px;font-size:10.5px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.1);padding:4px 10px;border-radius:8px;border:1px solid var(--border);text-decoration:none;}
+.tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;}
+.tag{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:600;}
+.ti{background:rgba(46,204,113,.15);color:#2ECC71}.te{background:rgba(233,69,96,.15);color:#E94560}
+.to{background:rgba(155,89,182,.15);color:#C39BD3}.tv{background:rgba(201,168,76,.18);color:var(--gold)}
+.tk{background:rgba(52,152,219,.15);color:#85C1E9}
+
+/* Hotel box */
+.hb{margin-top:11px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));border:1px solid var(--border);border-radius:10px;padding:12px;}
+.hb h4{color:var(--gold);font-size:9.5px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700;}
+.hbn{font-size:13px;font-weight:800;color:var(--w);}
+.hbr{margin-top:5px;font-size:10.5px;color:var(--mt);line-height:1.6;}
+.hbl{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.1);padding:4px 11px;border-radius:8px;border:1px solid var(--border);text-decoration:none;}
+
+/* Nav arrows */
+.dn2{display:flex;gap:6px;margin-top:12px;}
+.da{flex:1;padding:13px 4px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--w);font-size:11px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;}
+.da:disabled{opacity:.3;}
+
+/* Overview */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+.st{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 6px;text-align:center;}
+.sv{font-size:22px;font-weight:900;color:var(--gold);}
+.sl{font-size:8.5px;color:var(--mt);text-transform:uppercase;margin-top:1px;}
+.sec{color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.og{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:13px;}
+.oc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 10px;cursor:pointer;}
+.ocd{font-size:8.5px;color:var(--gold);font-weight:700;}
+.oct{font-size:10.5px;font-weight:700;color:var(--w);margin-top:2px;line-height:1.3;}
+.ocl{font-size:9.5px;color:var(--mt);margin-top:1px;}
+.fl{background:rgba(233,69,96,.07);border:1px solid rgba(233,69,96,.2);border-radius:10px;padding:12px;margin-bottom:8px;}
+.fm{font-size:9.5px;color:rgba(255,255,255,.4);margin-bottom:6px;}
+.fr{display:flex;align-items:center;gap:8px;direction:ltr;}
+.fc{font-size:14px;font-weight:800;color:var(--w);}
+.fa{color:var(--red);font-size:13px;flex:1;text-align:center;}
+.fi{font-size:9px;color:var(--mt);margin-top:1px;}
+.kb{margin-top:11px;padding:11px 12px;background:rgba(52,152,219,.07);border:1px solid rgba(52,152,219,.17);border-radius:10px;font-size:10.5px;color:var(--mt);line-height:1.75;}
+.kb strong{color:var(--gold);}
+.kb a{color:var(--gold);text-decoration:none;}
+
+/* Costs */
+.ctot{margin-bottom:14px;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border:2px solid var(--gold);border-radius:13px;overflow:hidden;}
+.ch{background:rgba(201,168,76,.22);padding:9px 14px;text-align:center;font-size:9.5px;color:var(--mt);letter-spacing:.7px;text-transform:uppercase;}
+.cb{padding:20px 14px;}
+.cusd{text-align:center;margin-bottom:12px;}
+.cudl{font-size:9.5px;color:var(--mt);margin-bottom:3px;}
+.cudv{font-size:44px;font-weight:900;color:var(--gold);line-height:1;}
+.csep{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.cils{text-align:center;margin-bottom:12px;}
+.cilsl{font-size:9.5px;color:var(--mt);margin-bottom:3px;}
+.cilsv{font-size:32px;font-weight:900;color:var(--w);line-height:1;}
+.cn{background:rgba(0,0,0,.2);border-radius:8px;padding:9px 12px;font-size:10.5px;color:var(--mt);text-align:center;line-height:1.5;}
+.ib{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11px;color:var(--mt);line-height:2;}
+.eb{margin-top:8px;background:rgba(233,69,96,.07);border:1px solid rgba(233,69,96,.17);border-radius:10px;padding:12px;font-size:11px;color:var(--mt);line-height:2;}
+.eb strong{color:#E94560;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-r1">
+      <div class="pts"><div class="pts-n">P.T.S</div><div class="pts-s">PERSONAL TRAVEL SERVICES</div></div>
+      <div class="hdr-c"><div class="htitle">וייטנאם פנורמה — 16 ימים</div><div class="hdate">28 יולי – 12 אוגוסט 2026 · האנוי · סאפה · הא לונג · הוי אן · דה נאנג · סייגון</div></div>
+      <div class="chip">משפחת חי ראובן<br>✦ 5 נוסעים</div>
+    </div>
+    <div class="prog" id="prg"></div>
+  </div>
+  <div class="nav" id="nav"></div>
+  <div class="sc" id="sc"></div>
+</div>
+<script>
+const GM=q=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
+const LS="https://www.sofitel-legend-metropole-hanoi.com/";
+const LC="https://mgallery.accor.com/en/hotels/A5V2.html?merchantid=seo-maps-VN-A5V2&sourceid=aw-cen&utm_source=google+Maps&utm_medium=seo+maps&utm_campaign=seo+maps&utm_term=MGallery-Launch";
+const LE="https://www.eliteoftheseas.com/";
+const LR="https://www.hotelroyalhoian.com/";
+const LI="https://www.ihg.com/intercontinental/hotels/us/en/da-nang/dadha/hoteldetail";
+const LA="https://www.hoteldesartssaigon.com/";
+const LCH="https://www.chabad.org/centers/default_cdo/aid/3994/jewish/Hanoi.htm";
+const LF="https://fansipanlegend.sunworld.vn/";
+const LB=GM("Ba Na Hills Sun World Golden Bridge Da Nang Vietnam");
+const LV="https://vespaadventures.com/";
+const LH="https://hoianancienttown.vn/";
+const LRB=GM("Red Bridge Cooking School Hoi An Vietnam");
+const LW=GM("War Remnants Museum Ho Chi Minh City Vietnam");
+
+const days=[
+{id:1,date:"יום שלישי, 28 יולי 2026",loc:"האנוי",title:"הגעה – סיור רובע העתיק",hotel:"Sofitel Legend Metropole Hanoi 5★",rooms:"הורים: 1 Grand Premium + הטבות קלאב\nילדים: 1 Grand Premium + הטבות קלאב + מיטה נוספת",hl:LS,events:[
+{t:"flight",i:"✈️",n:"הגעה לנמל התעופה נוי בּאי הבינלאומי",tm:"13:15",d:"שירות VIP מסלול מהיר. קבלת פנים על ידי נציג ומדריך פרטי.",tg:["inc","vip"]},
+{t:"transfer",i:"🚗",n:"לימוזינה פרטית למלון — צ'ק-אין (30 ק\"מ)",tm:"~14:00",d:"רכב 11 מושבים עם מיזוג אוויר ומים קרים.",tg:["inc"]},
+{t:"activity",i:"🛺",n:"סיור בטוק-טוק חשמלי — רובע העתיק",tm:"16:30",d:"סיור אוריינטציה פנורמי. מסחר מסורתי וחיי יום-יום תוססים.",tg:["inc"]},
+{t:"activity",i:"🍦",n:"גלידת טרנג טיין — עצירה אייקונית",tm:"~17:15",d:"גלידת האנוי האהובה מאז 1958, ברחוב ליד האגם.",l:GM("Trang Tien Ice Cream Hanoi Vietnam"),lt:"מיקום ב-Google Maps",tg:["exp"]},
+{t:"activity",i:"⛩️",n:"מקדש נגוק שון — אגם הואן קיאם",tm:"~17:30",d:"מקדש על אי קטן, גשר האדום האייקוני The Huc Bridge.",l:GM("Ngoc Son Temple Hoan Kiem Lake Hanoi"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"meal",i:"🍽️",n:"ארוחת ערב מועדפת — בליווי המדריך לפי בחירתכם",tm:"ערב",d:"תשלום עצמאי. הסעה פרטית לפי הצורך.",tg:["exp"]},
+{t:"hotel",i:"🏨",n:"לינה — Sofitel Legend Metropole Hanoi",tm:"",d:"",tg:[]},
+]},
+{id:2,date:"יום רביעי, 29 יולי 2026",loc:"האנוי",title:"מוזיאון האתנולוגיה – כפר הקרמיקה בּאט טראנג – רחוב הרכבת",hotel:"Sofitel Legend Metropole Hanoi 5★",rooms:"כנ\"ל יום 1",hl:LS,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🏛️",n:"מוזיאון האתנולוגיה של ווייטנאם",tm:"בוקר",d:"54 קבוצות אתניות — תלבושות, כלים, בתים מסורתיים אותנטיים בחצר.",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"נסיעה לכפר הקרמיקה בּאט טראנג (~15 ק\"מ)",tm:"~11:00",d:"",tg:["inc"]},
+{t:"activity",i:"🏺",n:"Bat Trang Ceramic Village — כפר הקרמיקה",tm:"~11:30",d:"אחד מכפרי הקרמיקה הוותיקים בווייטנאם. צפייה באומנים.",l:GM("Bat Trang Ceramic Village Hanoi Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"note",i:"☕",n:"עצירה בבית קפה — תשלום עצמאי",tm:"אחה\"צ",d:"",tg:["exp"]},
+{t:"activity",i:"🚂",n:"רחוב הרכבת של האנוי — חוויה ייחודית",tm:"אחה\"צ",d:"הרכבת עוברת במרחק מטרים בלבד! מותנה בלוח זמנים.",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"לינה — Sofitel Legend Metropole Hanoi",tm:"",d:"",tg:[]},
+]},
+{id:3,date:"יום חמישי, 30 יולי 2026",loc:"האנוי → סאפה (315 ק\"מ)",title:"נסיעה לסאפה – מפל הכסף – גשר הזכוכית רונג מאי",hotel:"Hotel De La Coupole Sapa 5★ MGallery",rooms:"הורים: 1 Executive Suite Double Room\nילדים: 1 Deluxe Suite Double + מיטה נוספת",hl:LC,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"יציאה האנוי → סאפה (315 ק\"מ)",tm:"אחרי הבוקר",d:"נסיעה ציורית בכביש המהיר. עצירות מנוחה בדרך.",tg:["inc"]},
+{t:"activity",i:"💧",n:"מפל הכסף — Silver Waterfall",tm:"~צהריים",d:"נוף פנורמי להרי Fansipan, שדות מדורגים.",l:GM("Silver Waterfall Sapa Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"transfer",i:"🏨",n:"צ'ק-אין במלון ומנוחה",tm:"אחה\"צ",d:"",tg:["inc"]},
+{t:"activity",i:"🌉",n:"גשר הזכוכית רונג מאי — 2,000 מ'",tm:"אחה\"צ",d:"מהמרשימים בדרום-מזרח אסיה. נוף פנורמי.",l:GM("Rong May Glass Bridge Sapa Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"⚡",n:"זיפליין או נדנדת צוק — 2 פעילויות אדרנלין",tm:"אחה\"צ",d:"הכרטיס כולל 2 פעילויות לבחירה.",tg:["inc"]},
+{t:"activity",i:"🏘️",n:"כנסיית האבן של סאפה ורחבת העיר",tm:"אחה\"צ מאוחר",d:"מתחם צרפתי ייחודי. טיול בין חנויות מלאכה וטקסטיל.",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel De La Coupole Sapa 5★",tm:"",d:"",tg:[]},
+]},
+{id:4,date:"יום שישי, 31 יולי 2026",loc:"סאפה",title:"כפר קאט קאט – מסלול האלפיני – תצפית מואנה",hotel:"Hotel De La Coupole Sapa 5★ MGallery",rooms:"כנ\"ל יום 3",hl:LC,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🌾",n:"כפר קאט קאט — שבט Black H'mong",tm:"בוקר",d:"שביל ציורי בין שדות אורז מדורגים, בתים מסורתיים, אריגה.",l:GM("Cat Cat Village Sapa Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🛝",n:"מגלשת הכיף בכפר",tm:"~10:30",d:"פעילות קלה ומהנה.",tg:["inc"]},
+{t:"activity",i:"🎢",n:"Ban Mong Alpine Coaster — 1,000 מ'",tm:"~11:30",d:"המסלול הראשון והארוך בסאפה (נפתח 2024). 825 מ' ירידה.",l:GM("Ban Mong Alpine Coaster Sapa Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🌅",n:"Moana Sapa — תצפית ציורית",tm:"אחה\"צ",d:"אינסטלציות אמנותיות ומרקע הרי מדהים. תשלום עצמאי.",l:GM("Moana Sapa Viewpoint Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel De La Coupole Sapa 5★",tm:"",d:"",tg:[]},
+]},
+{id:5,date:"יום שבת, 1 אוגוסט 2026",loc:"סאפה – פאנסיפאן",title:"פאנסיפאן — גג אינדוצ'ינה — זמן פנוי",hotel:"Hotel De La Coupole Sapa 5★ MGallery",rooms:"כנ\"ל יום 3",hl:LC,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🚠",n:"רכבל Sun World פאנסיפאן — עלייה ל-2,800 מ'",tm:"~09:30",d:"הרכבל המפורסם בעולם. נוף פנורמי.",l:LF,lt:"Sun World Fansipan Legend — אתר רשמי",tg:["inc"]},
+{t:"activity",i:"🏔️",n:"פסגת פאנסיפאן — 3,143 מ' (גג אינדוצ'ינה)",tm:"~10:00",d:"אופציונלי: רכבת הר קצרה + הליכה לפסגה.",tg:["inc","opt"]},
+{t:"activity",i:"🚠",n:"ירידה ברכבל חזרה לסאפה",tm:"~12:00",d:"",tg:["inc"]},
+{t:"activity",i:"🛎️",n:"זמן פנוי בסאפה",tm:"אחה\"צ",d:"מנוחה במלון, טיול עצמאי, אוויר ההרים.",tg:[]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel De La Coupole Sapa 5★",tm:"",d:"",tg:[]},
+]},
+{id:6,date:"יום ראשון, 2 אוגוסט 2026",loc:"סאפה → האנוי (315 ק\"מ)",title:"חזרה להאנוי – עיסוי פרמיום – רחוב הולכי הרגל",hotel:"Sofitel Legend Metropole Hanoi 5★",rooms:"כנ\"ל יום 1",hl:LS,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר — צ'ק-אאוט",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"לימוזינה פרטית סאפה → האנוי (315 ק\"מ)",tm:"אחרי הבוקר",d:"עצירות מנוחה בדרך.",tg:["inc"]},
+{t:"transfer",i:"🏨",n:"הגעה האנוי — צ'ק-אין",tm:"~צהריים",d:"Sofitel Legend Metropole.",tg:["inc"]},
+{t:"spa",i:"💆",n:"עיסוי גוף פרמיום — 75 דקות",tm:"אחה\"צ",d:"5 סגנונות לבחירה: Bambo Symphony · Energy Flow Ritual · Sacred Stone Journey · Aroma Massage · Silk Touch Vietnam.",tg:["inc"]},
+{t:"meal",i:"🍽️",n:"ארוחת ערב — כשרה (Chabad) או צמחונית",tm:"ערב",d:"הסעה פרטית כלולה. הארוחה — תשלום עצמאי.",l:LCH,lt:"Chabad Hanoi — Chabad.org",tg:["opt","ksh","exp"]},
+{t:"activity",i:"🌃",n:"רחוב הולכי הרגל הואן קיאם — Sunday Market",tm:"אחרי הארוחה",d:"שוק רחוב יום ראשון. דוכני מלאכה, מזון מקומי, הופעות רחוב.",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"לינה — Sofitel Legend Metropole Hanoi",tm:"",d:"",tg:[]},
+]},
+{id:7,date:"יום שני, 3 אוגוסט 2026",loc:"האנוי → מפרץ הא לונג (185 ק\"מ)",title:"שייט מפרץ הא לונג — יום ראשון",hotel:"Elite of the Seas Cruise 5★",rooms:"הורים: Executive Suite\nילדים: Senior Premium Suite + מיטה נוספת",hl:LE,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"העברה האנוי ← נמל הא לונג (185 ק\"מ)",tm:"אחרי הבוקר",d:"עצירת מנוחה בדרך.",tg:["inc"]},
+{t:"cruise",i:"⚓",n:"צ'ק-אין בנמל — מעבר בסירה מהירה לקרוז",tm:"11:15–11:45",d:"קבלת פנים בנמל, סירה מהירה לקרוז הפאר 5★.",l:LE,lt:"אתר הקרוז הרשמי",tg:["inc","vip"]},
+{t:"meal",i:"🍽️",n:"ארוחת צהריים בקרוז תוך כדי שיט",tm:"~12:00",d:"ארוחה עשירה תוך צפייה בנוף המרהיב.",tg:["inc"]},
+{t:"activity",i:"🚣",n:"מערת לואן — קיאקינג או סירת במבוק",tm:"~14:00",d:"בחרו בין קיאקינג עצמאי לסירת במבוק עם חותרים מקומיים.",l:GM("Luon Cave Ha Long Bay Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🏝️",n:"אי טיטופ — חוף ונוף פנורמי",tm:"~15:30",d:"חוף בצורת סהר. טיפוס לפסגת האי לנוף עוצר נשימה.",l:GM("Titop Island Ha Long Bay Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🌅",n:"שקיעה בסיפון",tm:"~17:30",d:"שתיות ושקיעה קסומה על המפרץ.",tg:["inc"]},
+{t:"meal",i:"🍽️",n:"ארוחת ערב בקרוז",tm:"~19:00",d:"",tg:["inc"]},
+{t:"cruise",i:"🛏️",n:"לינה — קבין פרטי בקרוז",tm:"",d:"",tg:[]},
+]},
+{id:8,date:"יום שלישי, 4 אוגוסט 2026",loc:"הא לונג → האנוי ✈ דה נאנג → הוי אן",title:"יציאת קרוז – שופינג – טיסה לדה נאנג – הוי אן",hotel:"Hotel Royal Hoi An 5★ MGallery",rooms:"הורים: 1 Deluxe Suite + גישה ללאונג'\nילדים: 1 Royal Deluxe + גישה ללאונג' + מיטה נוספת",hl:LR,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר בקרוז",tm:"בוקר מוקדם",d:"",tg:["inc"]},
+{t:"cruise",i:"🧳",n:"צ'ק-אאוט מהקרוז",tm:"09:30–09:45",d:"",tg:[]},
+{t:"meal",i:"🥗",n:"ברנץ' בופה בקרוז תוך חזרה לנמל",tm:"09:45",d:"",tg:["inc"]},
+{t:"transfer",i:"⛵",n:"סירה מהירה חזרה לנמל",tm:"10:45",d:"הגעה לנמל ~11:15–11:20.",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"העברה נמל ← האנוי",tm:"~11:20",d:"",tg:["inc"]},
+{t:"activity",i:"🛍️",n:"קניות — AEON Mall Long Bien, האנוי",tm:"אחה\"צ",l:GM("AEON Mall Long Bien Hanoi Vietnam"),lt:"מיקום ב-Google Maps",d:"קניון מודרני, מותגים בינלאומיים.",tg:[]},
+{t:"flight",i:"✈️",n:"טיסה BL6071 — האנוי (HAN) ← דה נאנג (DAD)",tm:"18:20 → 19:50",d:"Business Flex. 10 ק\"ג יד + 23 ק\"ג מטען.",tg:["inc","vip"]},
+{t:"transfer",i:"🚗",n:"העברה דה נאנג ← הוי אן (~30 ק\"מ)",tm:"~20:30",d:"קבלת פנים מדריך ונהג מקומיים.",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"צ'ק-אין — Hotel Royal Hoi An 5★",tm:"ערב",d:"",tg:[]},
+]},
+{id:9,date:"יום רביעי, 5 אוגוסט 2026",loc:"הוי אן",title:"יער קוקוס – שיעור בישול – עיר עתיקה – סדנת פנסים",hotel:"Hotel Royal Hoi An 5★ MGallery",rooms:"כנ\"ל יום 8",hl:LR,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🌴",n:"יער הקוקוסים — Coco Forest + סירת הסל",tm:"בוקר",d:"שייט בסירת סל ייחודית בין עצי הקוקוס.",l:GM("Coco Forest Cam Thanh Hoi An Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"👨‍🍳",n:"Red Bridge Cooking School — שיעור בישול",tm:"~10:00",d:"מנות וייטנאמיות מחומרים טריים — אוכלים את מה שמכינים!",l:LRB,lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"meal",i:"🍽️",n:"+ ארוחת צהריים",tm:"~12:00",d:"",tg:["inc"]},
+{t:"activity",i:"🏛️",n:"הוי אן העתיקה — סיור רגלי (UNESCO)",tm:"אחה\"צ",d:"מקדש Chua Ong · בית Tan Ky בן 200 שנה · הגשר המקורה היפני.",l:LH,lt:"אתר העיר העתיקה",tg:["inc"]},
+{t:"activity",i:"🏮",n:"סדנת הכנת פנסים",tm:"אחה\"צ מאוחר",d:"לומדים טכניקות מסורתיות ויוצרים פנס משלכם כמזכרת.",tg:["inc"]},
+{t:"activity",i:"🚣",n:"המלצה: שייט פנסים בנהר הואי",tm:"ערב",d:"שייט לאורך נהר הואי בלילה מוקף פנסים. תשלום עצמאי.",tg:["opt","exp"]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel Royal Hoi An 5★",tm:"",d:"",tg:[]},
+]},
+{id:10,date:"יום חמישי, 6 אוגוסט 2026",loc:"הוי אן / הרי בה נה",title:"הרי בה נה – גשר הזהב – עיסוי – מופע הוי אן ממוריז",hotel:"Hotel Royal Hoi An 5★ MGallery",rooms:"כנ\"ל יום 8",hl:LR,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"נסיעה לפארק Ba Na Hills (~50 ק\"מ)",tm:"אחרי הבוקר",d:"",tg:["inc"]},
+{t:"activity",i:"⚡",n:"כניסה מועדפת — WOW Pass Gold Type",tm:"~09:00",d:"כרטיס מסלול מהיר לכל האתר.",l:LB,lt:"מיקום ב-Google Maps",tg:["inc","vip"]},
+{t:"activity",i:"🚠",n:"רכבל — עלייה להרים ולעננים",tm:"~09:15",d:"",tg:["inc"]},
+{t:"activity",i:"🌉",n:"גשר הזהב — ידי האלמוג הענקיות",tm:"~10:00",d:"הנוף המצולם ביותר בווייטנאם. גשר שנראה מוחזק ביד ענק.",tg:["inc"]},
+{t:"activity",i:"🌸",n:"גן D'Amour · מרתף Debay · כפר צרפתי",tm:"~10:30",d:"גן פרחים קסום, מרתף יין היסטורי, עיר אירופאית בהר.",tg:["inc"]},
+{t:"activity",i:"🎮",n:"Fantasy Park — פארק בידור מקורה",tm:"~11:30",d:"משחקים לכל הגילאים. תשלום עצמאי.",tg:["exp"]},
+{t:"transfer",i:"🚗",n:"חזרה לעיר העתיקה של הוי אן",tm:"אחה\"צ",d:"",tg:["inc"]},
+{t:"spa",i:"💆",n:"עיסוי מרגיע בעיר העתיקה",tm:"אחה\"צ",d:"",tg:["inc"]},
+{t:"activity",i:"🛍️",n:"זמן חופשי — רחובות הפנסים",tm:"אחה\"צ מאוחר",d:"חנויות בוטיק, בתי קפה, קניות.",tg:[]},
+{t:"activity",i:"🎭",n:"מופע הוי אן ממוריז — מושבי VIP",tm:"ערב",d:"מופע חיצוני ב-Impression Theme Park. ~60 דקות. במה ענקית, מאות מופיעים.",tg:["inc","vip"]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel Royal Hoi An 5★",tm:"",d:"",tg:[]},
+]},
+{id:11,date:"יום שישי, 7 אוגוסט 2026",loc:"הוי אן → דה נאנג",title:"מעבר לדה נאנג – סיור התמצאות – צ'ק-אין ריזורט",hotel:"InterContinental Danang Sun Peninsula Resort 5★",rooms:"הורים: 1 Club Suite Panoramic Oceanview + הטבות קלאב\nילדים: 1 Club Twin Panoramic Oceanview + הטבות קלאב + מיטה נוספת",hl:LI,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"cruise",i:"🧳",n:"צ'ק-אאוט מהוי אן",tm:"12:00",d:"",tg:[]},
+{t:"transfer",i:"🚗",n:"יציאה לדה נאנג (~30 ק\"מ)",tm:"~12:30",d:"נסיעה לאורך חוף הים הציורי.",tg:["inc"]},
+{t:"activity",i:"🏙️",n:"סיור התמצאות בדה נאנג ומרכז העיר",tm:"~13:30",d:"הגשרים המפורסמים, רחוב הנהר, מרכז העיר התוסס.",l:GM("Da Nang city center Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"transfer",i:"🏨",n:"צ'ק-אין — InterContinental Danang Sun Peninsula 5★",tm:"~15:00",l:LI,lt:"אתר הריזורט הרשמי",d:"",tg:["inc","vip"]},
+{t:"activity",i:"🏖️",n:"זמן חופשי — חוף ים וריזורט",tm:"אחה\"צ–ערב",d:"",tg:[]},
+{t:"hotel",i:"🏨",n:"לינה — InterContinental Danang Sun Peninsula 5★",tm:"",d:"",tg:[]},
+]},
+{id:12,date:"יום שבת, 8 אוגוסט 2026",loc:"דה נאנג",title:"יום חופשי מלא בחוף הים — ללא מדריך ונהג",hotel:"InterContinental Danang Sun Peninsula Resort 5★",rooms:"כנ\"ל יום 11",hl:LI,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר בריזורט",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🏖️",n:"יום חופשי מלא — חוף הים",tm:"כל היום",d:"ללא מדריך ונהג. שחייה, חול זהב, בתי קפה חוף, מיצים טריים — בטמפו שלכם.",tg:[]},
+{t:"note",i:"ℹ️",n:"ארוחות צהריים וערב — תשלום עצמאי",tm:"",d:"",tg:["exp"]},
+{t:"hotel",i:"🏨",n:"לינה — InterContinental Danang Sun Peninsula 5★",tm:"",d:"",tg:[]},
+]},
+{id:13,date:"יום ראשון, 9 אוגוסט 2026",loc:"דה נאנג",title:"יום חופשי בריזורט",hotel:"InterContinental Danang Sun Peninsula Resort 5★",rooms:"Three-Bedroom Sun Peninsula Residence",hl:LI,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר בריזורט",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🏖️",n:"יום חופשי מלא בריזורט",tm:"כל היום",d:"ליהנות ממתקני הריזורט הפרטיים, הבריכה, חוף הים, וגלי האוקיינוס.",tg:[]},
+{t:"note",i:"ℹ️",n:"ארוחות צהריים וערב — תשלום עצמאי",tm:"",d:"",tg:["exp"]},
+{t:"hotel",i:"🏨",n:"לינה — InterContinental Danang Sun Peninsula 5★",tm:"",d:"",tg:[]},
+]},
+{id:14,date:"יום שני, 10 אוגוסט 2026",loc:"דה נאנג ✈ סייגון (הו צ'י מין)",title:"טיסה לסייגון – צ'ק-אין – סיור אוכל בווספות",hotel:"Hotel des Arts Saigon 5★ MGallery",rooms:"הורים: 1 Executive Studio Suite + גישה ללאונג'\nילדים: 1 Executive Studio Suite + גישה ללאונג' + מיטה נוספת",hl:LA,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר בריזורט — צ'ק-אאוט",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"העברה לנמל התעופה דה נאנג",tm:"~10:00",d:"להגיע 1.5–2 שעות לפני הטיסה.",tg:["inc"]},
+{t:"flight",i:"✈️",n:"טיסה VN123 — דה נאנג (DAD) ← סייגון (SGN)",tm:"11:55 → 13:25",d:"Business Flex. 10 ק\"ג יד + 23 ק\"ג מטען.",tg:["inc","vip"]},
+{t:"transfer",i:"🚗",n:"העברה Tan Son Nhat → Hotel des Arts (30 ק\"מ)",tm:"~14:00",d:"קבלת פנים מדריך ונהג מקומיים. צ'ק-אין ומנוחה קצרה.",tg:["inc"]},
+{t:"activity",i:"🛵",n:"סיור אוכל צמחוני — ווספות וינטג' בסייגון",tm:"ערב",d:"צוות נשים בלבוש áo dài, ווספות וינטג', רחובות סייגון. 10+ מנות צמחוניות. אוכל ושתייה ללא הגבלה.",l:LV,lt:"אתר Vespa Adventures",tg:["inc"]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel des Arts Saigon 5★",tm:"ערב",d:"",tg:[]},
+]},
+{id:15,date:"יום שלישי, 11 אוגוסט 2026",loc:"סייגון → בן טרה → סייגון",title:"דלתת המקונג — בן טרה — קניות בסייגון",hotel:"Hotel des Arts Saigon 5★ MGallery",rooms:"כנ\"ל יום 13",hl:LA,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"transfer",i:"🚗",n:"נסיעה לבן טרה, דלתת המקונג (90 ק\"מ)",tm:"אחרי הבוקר",d:"",tg:["inc"]},
+{t:"activity",i:"⛵",n:"שייט בנהר בן טרה — Hung Vuong Pier",tm:"~10:00",d:"עלייה לסירה מסורתית ושייט לאורך הנהר.",l:GM("Hung Vuong Pier Ben Tre Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🧱",n:"בית חרושת לבנים מסורתי",tm:"~10:30",d:"כבשנים ענקיים ותהליך הייצור הידני.",tg:["inc"]},
+{t:"activity",i:"🥥",n:"סדנת ממתקי קוקוס",tm:"~11:00",d:"צופים בייצור הממתקים המסורתיים. מוצר לקחת הביתה!",tg:["inc"]},
+{t:"activity",i:"🛺",n:"טוק-טוק בכפרים הכפריים",tm:"~11:30",d:"כבישים מפותלים. עצירה במשפחה שמשרגת מחצלות.",tg:["inc"]},
+{t:"activity",i:"🚣",n:"סירת חתירה בסבך התעלות",tm:"~12:00",d:"ניווט במבוך תעלות קטנות.",tg:["inc"]},
+{t:"activity",i:"🏛️",n:"Vinh Trang Pagoda — עצירה בדרך חזרה",tm:"~14:00",d:"60+ פסלי בודהה מוזהבים מסוף המאה ה-19.",l:GM("Vinh Trang Pagoda My Tho Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🛍️",n:"קניות — Saigon Centre",tm:"אחה\"צ מאוחר",l:GM("Saigon Centre Ho Chi Minh City Vietnam"),lt:"מיקום ב-Google Maps",d:"קניון מודרני עם מותגים בינלאומיים.",tg:[]},
+{t:"hotel",i:"🏨",n:"לינה — Hotel des Arts Saigon 5★",tm:"",d:"",tg:[]},
+]},
+{id:16,date:"יום רביעי, 12 אוגוסט 2026",loc:"סייגון — סיור עיר ויציאה",title:"מוזיאון שרידי המלחמה – שוק הטקסטיל – Union Square – יציאה",hotel:"Hotel des Arts Saigon 5★ MGallery",rooms:"Late Check-out עד 20:00",hl:LA,events:[
+{t:"meal",i:"☕",n:"ארוחת בוקר במלון",tm:"בוקר",d:"",tg:["inc"]},
+{t:"activity",i:"🏛️",n:"מוזיאון שרידי המלחמה",tm:"~09:00",d:"אחד המוזיאונים ההיסטוריים החשובים בווייטנאם. תערוכות עוצמתיות.",l:LW,lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🛒",n:"שוק בן תאן — שוק הטקסטיל של סייגון",tm:"~10:00",d:"שוק הטקסטיל האייקוני של סייגון — בדים, בגדים, תיקים, מלאכת יד.",l:GM("Ben Thanh Market Ho Chi Minh City Vietnam"),lt:"מיקום ב-Google Maps",tg:["inc"]},
+{t:"activity",i:"🛍️",n:"Union Square — קניון היוקרה של סייגון",tm:"~11:30",d:"הקניון היוקרתי ביותר בווייטנאם. Hermès, Louis Vuitton, Chanel, Dior, Gucci, Prada, Cartier ועוד.",l:GM("Union Square Ho Chi Minh City Dong Khoi Vietnam"),lt:"מיקום ב-Google Maps",tg:[]},
+{t:"hotel",i:"🏨",n:"חזרה למלון — מנוחה ופנאי",tm:"אחה\"צ",d:"Late Check-out עד 20:00 — יש זמן להתארגן בנוחות.",tg:["inc","vip"]},
+{t:"transfer",i:"🚗",n:"העברה לנמל Tan Son Nhat (30 ק\"מ)",tm:"לפי שעת הטיסה",d:"להגיע לפחות 3 שעות לפני הטיסה הבינלאומית.",tg:["inc"]},
+{t:"note",i:"✅",n:"סיום התוכנית — נסיעה טובה!",tm:"",d:"תזכורות: דרכון תקף 6+ חודשים · ויזה אלקטרונית: evisa.gov.vn · שמרו על חפצי ערך.",tg:[]},
+]},
+];
+
+let cur=null;
+
+function tg(t){
+  if(t==='inc')return'<span class="tag ti">כלול</span>';
+  if(t==='exp')return'<span class="tag te">תשלום עצמאי</span>';
+  if(t==='opt')return'<span class="tag to">אופציונלי</span>';
+  if(t==='vip')return'<span class="tag tv">VIP</span>';
+  if(t==='ksh')return'<span class="tag tk">כשר-ידידותי</span>';
+  return'';
+}
+
+function go(k){
+  cur=k;
+  render();
+  document.getElementById('sc').scrollTop=0;
+}
+
+function render(){
+  const prg=document.getElementById('prg');
+  prg.innerHTML=days.map((d,i)=>`<div class="pd${cur===i?' a':''}" onclick="go(${i})"></div>`).join('');
+  const nav=document.getElementById('nav');
+  const kStr=k=>k===null?'null':typeof k==='string'?"'"+k+"'":k;
+  const items=[{l:'סקירה',k:null},{l:'עלויות',k:'costs'},...days.map((d,i)=>({l:'יום '+d.id,k:i}))];
+  nav.innerHTML=items.map(item=>`<button class="nb${cur===item.k?' a':''}" onclick="go(${kStr(item.k)})">${item.l}</button>`).join('');
+  const sc=document.getElementById('sc');
+  if(cur===null) renderOv(sc);
+  else if(cur==='costs') renderCosts(sc);
+  else renderDay(sc,days[cur]);
+}
+
+function renderDay(sc,d){
+  const evs=d.events.map(e=>`
+    <div class="ev ${e.t}">
+      <div class="et">
+        <span class="ei">${e.i}</span>
+        <span class="en">${e.n}</span>
+        ${e.tm?`<span class="etime">${e.tm}</span>`:''}
+      </div>
+      ${e.d?`<div class="ed">${e.d}</div>`:''}
+      ${e.l?`<a class="el" href="${e.l}" target="_blank">🔗 ${e.lt||''}</a>`:''}
+      ${e.tg&&e.tg.length?`<div class="tags">${e.tg.map(tg).join('')}</div>`:''}
+    </div>`).join('');
+  sc.innerHTML=`
+    <div class="dh">
+      <div class="dnr"><div class="dn">${String(d.id).padStart(2,'0')}</div><div class="dt">${d.title}</div></div>
+      <div class="dd">${d.date}</div>
+      <div class="dl">${d.loc}</div>
+    </div>
+    <div class="tl">${evs}</div>
+    <div class="hb">
+      <h4>לינה הלילה</h4>
+      <div class="hbn">${d.hotel}</div>
+      <div class="hbr">${d.rooms.replace(/\n/g,'<br>')}</div>
+      ${d.hl?`<a class="hbl" href="${d.hl}" target="_blank">אתר המלון ←</a>`:''}
+    </div>
+    <div class="dn2">
+      <button class="da" onclick="go(${cur-1})" ${cur<=0?'disabled':''}>← יום ${cur}</button>
+      <button class="da" onclick="go(null)">סקירה</button>
+      <button class="da" onclick="go(${cur+1})" ${cur>=15?'disabled':''}>יום ${cur+2} →</button>
+    </div>`;
+}
+
+function renderOv(sc){
+  const dates=['28/07','29/07','30/07','31/07','01/08','02/08','03/08','04/08','05/08','06/08','07/08','08/08','09/08','10/08','11/08','12/08'];
+  sc.innerHTML=`
+    <div class="stats">
+      <div class="st"><div class="sv">16</div><div class="sl">ימים</div></div>
+      <div class="st"><div class="sv">15</div><div class="sl">לילות</div></div>
+      <div class="st"><div class="sv">5★</div><div class="sl">מלונות</div></div>
+      <div class="st"><div class="sv">5</div><div class="sl">נוסעים</div></div>
+      <div class="st"><div class="sv">2</div><div class="sl">טיסות פנים</div></div>
+      <div class="st"><div class="sv">6</div><div class="sl">ערים</div></div>
+    </div>
+    <div class="sec">טיסות בינלאומיות — Emirates Business Class</div>
+    <div style="font-size:9.5px;color:rgba(240,244,248,0.6);margin-bottom:8px;padding:0 2px;">✈ יציאה — 27-28 יולי 2026</div>
+    <div class="fl">
+      <div class="fm">ב׳ 27 יולי · EK 2451 / FZ 1626 · Business</div>
+      <div class="fr">
+        <div><div class="fc">תל אביב (TLV)</div><div class="fi">יוצאת 19:25</div></div>
+        <div class="fa">——✈——</div>
+        <div style="text-align:left"><div class="fc">דובאי (DXB)</div><div class="fi">מגיעה 00:10 (+1)</div></div>
+      </div>
+    </div>
+    <div class="fl">
+      <div class="fm">ג׳ 28 יולי · EK 394 · Business</div>
+      <div class="fr">
+        <div><div class="fc">דובאי (DXB)</div><div class="fi">יוצאת 03:30</div></div>
+        <div class="fa">——✈——</div>
+        <div style="text-align:left"><div class="fc">האנוי (HAN)</div><div class="fi">מגיעה 13:15</div></div>
+      </div>
+    </div>
+    <div style="font-size:9.5px;color:rgba(240,244,248,0.6);margin:10px 0 8px;padding:0 2px;">✈ שיבה — 12-13 אוגוסט 2026</div>
+    <div class="fl">
+      <div class="fm">ד׳ 12 אוגוסט · EK 393 · Business</div>
+      <div class="fr">
+        <div><div class="fc">סייגון (SGN)</div><div class="fi">יוצאת 23:50</div></div>
+        <div class="fa">——✈——</div>
+        <div style="text-align:left"><div class="fc">דובאי (DXB)</div><div class="fi">מגיעה 03:45 (+1)</div></div>
+      </div>
+    </div>
+    <div class="fl">
+      <div class="fm">ה׳ 13 אוגוסט · EK 2120 / FZ 1073 · Business</div>
+      <div class="fr">
+        <div><div class="fc">דובאי (DXB)</div><div class="fi">יוצאת 06:15</div></div>
+        <div class="fa">——✈——</div>
+        <div style="text-align:left"><div class="fc">תל אביב (TLV)</div><div class="fi">מגיעה 08:45</div></div>
+      </div>
+    </div>
+    <div class="sec">מסלול מלא במבט אחד</div>
+    <div class="og">${days.map((d,i)=>`
+      <div class="oc" onclick="go(${i})">
+        <div class="ocd">יום ${d.id} · ${dates[i]}</div>
+        <div class="oct">${d.title}</div>
+        <div class="ocl">${d.loc}</div>
+      </div>`).join('')}
+    </div>
+    <div class="kb">
+      <strong>הערות כשרות:</strong><br>
+      ימים 1 ו-6 (האנוי) — מסעדה כשרה דרך <a href="${LCH}" target="_blank">Chabad האנוי</a>. הסעה פרטית כלולה. הארוחות — תשלום עצמאי.<br>
+      שיעור הבישול (הוי אן) — מנות צמחוניות בלבד.<br>
+      סיור הווספות (סייגון) — 10+ מנות צמחוניות.
+    </div>`;
+}
+
+function renderCosts(sc){
+  sc.innerHTML=`
+    <div class="ctot">
+      <div class="ch">עלות כוללת לטיול — 5 נוסעים · 16 ימים · כולל כל השירותים</div>
+      <div class="cb">
+        <div class="cusd"><div class="cudl">דולר אמריקאי (USD)</div><div class="cudv">$76,202</div></div>
+        <hr class="csep">
+        <div class="cils"><div class="cilsl">שקל ישראלי — שער דולר 3.0349</div><div class="cilsv">₪231,267</div></div>
+        <div class="cn">המחיר כולל את כל השירותים המפורטים בהצעה</div>
+      </div>
+    </div>
+    <div class="sec">טיסות פנים — Business Flex (כלולות)</div>
+    <div class="fl">
+      <div class="fm">טיסה 1 · BL6071 · Business Flex · ג׳ 4 אוגוסט</div>
+      <div class="fr">
+        <div><div class="fc">האנוי (HAN)</div><div class="fi">יוצאת 18:20</div></div>
+        <div class="fa">——<span style="display:inline-block;transform:scaleX(-1)">✈</span>——</div>
+        <div style="text-align:left"><div class="fc">דה נאנג (DAD)</div><div class="fi">מגיעה 19:50</div></div>
+      </div>
+      <div style="margin-top:7px;font-size:9.5px;color:rgba(255,255,255,.35)">10 ק"ג יד + 23 ק"ג מטען נרשם</div>
+    </div>
+    <div class="fl">
+      <div class="fm">טיסה 2 · VN123 · Business Flex · ב׳ 10 אוגוסט</div>
+      <div class="fr">
+        <div><div class="fc">דה נאנג (DAD)</div><div class="fi">יוצאת 11:55</div></div>
+        <div class="fa">——<span style="display:inline-block;transform:scaleX(-1)">✈</span>——</div>
+        <div style="text-align:left"><div class="fc">סייגון (SGN)</div><div class="fi">מגיעה 13:25</div></div>
+      </div>
+      <div style="margin-top:7px;font-size:9.5px;color:rgba(255,255,255,.35)">10 ק"ג יד + 23 ק"ג מטען נרשם</div>
+    </div>
+    <div class="sec">מה כלול במחיר</div>
+    <div class="ib">
+      לינה בחדרים המפורטים (5★ לאורך כל הטיול) · טיסות פנים-ארציות Business Flex (2 טיסות) ·
+      שייט 2 ימים 1 לילה במפרץ הא לונג · מדריך אנגלופון לאורך הטיול (מחוץ לזמן חופשי) ·
+      לימוזינה פרטית לכל ההעברות · כניסות לאתרים הכלולים בתוכנית ·
+      Fast-track בהגעה וביציאה · שירות 24/7.
+    </div>
+    <div class="eb">
+      <strong>לא כלול:</strong> טיסות בינלאומיות · ויזה · ארוחות שאינן מצוינות · שתיות ·
+      טיפים למדריכים/נהגים/צוות השייט · הוצאות אישיות.
+    </div>`;
+}
+
+render();
+</script>
+</body>
+</html>
