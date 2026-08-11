@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צור שמיר - איה נאפה 2026 | תוכנית טיול</title>
+    <!-- React & Babel Core -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0B192C',
+                            blue: '#005580',
+                            teal: '#00A896',
+                            gold: '#F4A261',
+                            dark: '#1D2D44',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Rubik', sans-serif; background-color: #F3F4F6; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('schedule');
+            const [selectedDay, setSelectedDay] = useState('all');
+            const [menuSearch, setMenuSearch] = useState('');
+
+            // Days Data with all updated corrections
+            const scheduleData = [
+                {
+                    id: 1,
+                    date: '08/09/2026',
+                    dayName: 'יום שלישי | 08/09/2026 – הגעה, קבלת פנים וארוחת ערב',
+                    events: [
+                        { time: '14:15', title: 'נחיתה בנמל התעופה לרנקה', icon: 'fa-plane-arrival', desc: 'איסוף כבודה ויציאה לאוטובוס. קבלת חטיף אנרגיה ומים בהגעה.' },
+                        { time: '15:00', title: 'נסיעה למלון', icon: 'fa-bus', desc: 'נסיעה של כ-35 עד 45 דקות מנמל התעופה בלרנקה למלון Nissi Blu Beach Resort.' },
+                        { time: '15:45', title: 'קבלת פנים במלון', icon: 'fa-glass-cheers', desc: 'הגעה לקבלת פנים עם סנדוויצ׳ים ומתוקים, שתייה קלה, אוזו, יין הבית, בירה וקפה, צ׳ק-אין וחלוקת חדרים.' },
+                        { time: '16:15 - 20:00', title: 'מנוחה להתארגנות', icon: 'fa-bed', desc: 'זמן מנוחה והתרעננות בחדרים ובמתקני המלון.' },
+                        { 
+                            time: '20:00', 
+                            title: 'יציאה לארוחת ערב במסעדת VASSOS FISH TAVERN', 
+                            icon: 'fa-utensils', 
+                            desc: 'נסיעה קצרה של כ-10 דקות (כ-4.5 ק"מ). ישיבה באזור החיצוני של המסעדה.',
+                            hasMenu: 'vassos'
+                        },
+                        { time: '22:30', title: 'הסעה חזרה למלון / למרכז הבילויים', icon: 'fa-car', desc: 'הסעה שמקפיצה את המעוניינים להמשך בילוי במרכז הבילוי של איה נאפה / חזרה למלון.' },
+                        { time: '00:30', title: 'הסעה חזרה ממרכז העיר', icon: 'fa-moon', desc: 'הסעה חזרה ב-00:30 ממרכז הבילויים למלון.' }
+                    ]
+                },
+                {
+                    id: 2,
+                    date: '09/09/2026',
+                    dayName: 'יום רביעי | 09/09/2026 – הביץ\' קלאב LASMARI, ספורט ימי וערב ב-PEPPER',
+                    events: [
+                        { time: '08:00 - 10:30', title: 'ארוחת בוקר במלון', icon: 'fa-coffee', desc: 'ארוחת בוקר עשירה במלון Nissi Blu.' },
+                        { 
+                            time: '10:45', 
+                            title: 'יציאה לביץ\' קלאב LASMARI', 
+                            icon: 'fa-umbrella-beach', 
+                            desc: 'יציאה לביץ\' קלאב LASMARI המאפשר ליהנות בסטייל! אווירה מעולה, DJ ומוזיקה. במתחם אזור פרטי לקבוצה עם פופים, כיסאות נוח, ומספר קבנות שמורות למי שמחפש לתפוס צבע.',
+                            link: 'https://lasmaribeach.com/'
+                        },
+                        { time: '11:15', title: 'פעילות קבוצתית & עיסוי 20 דקות', icon: 'fa-spa', desc: 'פעילות קבוצתית שתפתח את היום בסטייל ובגיבוש. 20 דקות עיסוי לאדם.' },
+                        { 
+                            time: '11:15 - 15:15', 
+                            title: 'חבילת שתייה ללא הגבלה (4 שעות)', 
+                            icon: 'fa-cocktail', 
+                            desc: 'שתייה לא מוגבלת ל-4 שעות: מים מינרליים ומוגזים, בירה, שתייה קלה, קוקטיילים קלאסיים (Mojito, Margarita, Paloma, Aperol Spritz, Negroni), יינות הבית ומשקאות פרימיום.' 
+                        },
+                        { time: '11:30 - 13:30', title: 'ספורט ימי ממול LASMARI (שעתיים)', icon: 'fa-water', desc: 'לרשות הקבוצה: ספה, 2 סאפים ו-2 פדאלים.' },
+                        { 
+                            time: '13:30', 
+                            title: 'ארוחת צהריים במתחם המסעדה ב-LASMARI', 
+                            icon: 'fa-utensils', 
+                            desc: 'ארוחת צהריים עשירה במתחם המסעדה ב-LASMARI.',
+                            hasMenu: 'lasmari'
+                        },
+                        { time: '16:30', title: 'חזרה למלון למנוחה', icon: 'fa-couch', desc: 'הגעה למלון למנוחה והתארגנות לערב.' },
+                        { 
+                            time: '20:10', 
+                            title: 'יציאה לארוחת ערב ב-PEPPER BAR LOUNGE', 
+                            icon: 'fa-wine-glass-alt', 
+                            desc: 'יציאה ב-20:10. השולחן הוזמן ל-20:30. ישיבה בפנים בשולחנות גבוהים.',
+                            hasMenu: 'pepper',
+                            link: 'https://napaplaza.com/pepper-bar-restaurant/'
+                        },
+                        { 
+                            time: '22:30 ואילך', 
+                            title: 'מסיבה ב-PEPPER & אופציה ל-THE CASTLE CLUB', 
+                            icon: 'fa-compact-disc', 
+                            desc: 'המקום מתפתח למסיבה עם אנרגיה טובה, DJ וסקסופוניסט במקום. ניתן להישאר ב-PEPPER או להמשיך למועדון THE CASTLE CLUB.',
+                            link: 'https://thecastleclub.com/' 
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    date: '10/09/2026',
+                    dayName: 'יום חמישי | 10/09/2026 – חצי יום בלפקרה, יקב DAFERMOU, ארוחה מסכמת וטיסה',
+                    events: [
+                        { time: '08:00 - 09:45', title: 'ארוחת בוקר וצ׳ק-אאוט', icon: 'fa-suitcase', desc: 'ארוחת בוקר, פינוי חדרים והעמסת המזוודות.' },
+                        { time: '10:00', title: 'חצי יום לפקרה - יציאה מהמלון', icon: 'fa-mountain', desc: 'יציאה בשעה 10:00 לסיור בכפר הציורי לפקרה.' },
+                        { 
+                            time: '11:00', 
+                            title: 'טעימות ייין ב-DAFERMOU WINERY', 
+                            icon: 'fa-wine-bottle', 
+                            desc: 'סדנת Paparouna tasting (כ-40 דקות) במרתף היין: טעימה של 3 סוגי יינות, הסבר על תהליכי ייצור היין ומגשי גבינות ופירות.',
+                            link: 'https://dafermouwinery.com/'
+                        },
+                        { time: '12:00', title: 'זמן חופשי בלפקרה & חלוקת מתנות סיום', icon: 'fa-gift', desc: 'זמן חופשי לסיור בסמטאות לפקרה. חלוקת מתנת הסיום לקבוצה בתוך תיק מעוצב.' },
+                        { 
+                            time: '13:45', 
+                            title: 'ארוחה מסכמת ב-TOCHNI TAVERN / MARIA\'S RESTAURANT', 
+                            icon: 'fa-glass-cheers', 
+                            desc: 'ארוחת צהריים מסכמת בטוכני טברן / Maria\'s Restaurant.',
+                            link: 'https://vavatsiniavillage.com/marias-restaurant/'
+                        },
+                        { time: '15:15', title: 'יציאה לשדה התעופה בלרנקה', icon: 'fa-bus', desc: 'יציאה מרוכזת ומדויקת בשעה 15:15 לשדה התעופה בלרנקה לטיסתנו ארצה.' },
+                        { time: '18:30', title: 'טיסה ארצה (LY5142)', icon: 'fa-plane-departure', desc: 'המראה מ-LCA ב-18:30, נחיתה ב-TLV ב-19:35.' }
+                    ]
+                }
+            ];
+
+            // Menus Data
+            const menus = {
+                vassos: {
+                    title: 'VASSOS FISH TAVERN – תפריט ארוחת ערב (08/09/2026)',
+                    subtitle: 'אזור ישיבה חיצוני | שתייה קלה ומים ללא הגבלה / ייין ובירה מקומיים / אוזו',
+                    items: [
+                        { name: 'סלט כפרי', cat: 'ראשונות' },
+                        { name: 'טראמס', cat: 'מזטים' },
+                        { name: 'טחינה / חומוס / זיתים ירוקים', cat: 'מזטים' },
+                        { name: 'קרפצ\'יו לברק', cat: 'דגים' },
+                        { name: 'קישואים מטוגנים', cat: 'ראשונות' },
+                        { name: 'פטה מטוגנת עם דבש', cat: 'ראשונות' },
+                        { name: 'דגיגי ים מטוגנים או סמלט מטוגן', cat: 'דגים' },
+                        { name: 'ברבוניה מטוגנת', cat: 'דגים' },
+                        { name: 'דג חרב על הגריל', cat: 'דגים' },
+                        { name: 'דג בוגה ים־תיכוני מטוגן', cat: 'דגים' },
+                        { name: 'לברק בר טרי על הגריל', cat: 'דגים' },
+                        { name: 'תפוחי אדמה טריים בחיתוך ידני וירקות מוקפצים', cat: 'תוספות' },
+                        { name: 'רולים של סושי / מאקי: סלמון וטונה', cat: 'סושי' },
+                        { name: 'ספיישל תותים – גלידת וניל עם שוקולד בלגי ותותים', cat: 'קינוחים' },
+                        { name: 'פירות העונה', cat: 'קינוחים' }
+                    ]
+                },
+                lasmari: {
+                    title: 'LASMARI BEACH CLUB – תפריט (09/09/2026)',
+                    subtitle: 'חבילת שתייה חופשית 4 שעות + ארוחת צהריים ב-13:30 במתחם המסעדה',
+                    items: [
+                        { name: 'מטבלים ופיתה על הגריל (ציזיקי, טרמוסלטה, טירוקפטרי)', cat: 'ראשונות' },
+                        { name: 'קרפצ\'יו בקר', cat: 'ראשונות' },
+                        { name: 'סלט גבינת עזים ותרד', cat: 'סלטים' },
+                        { name: 'סלט יווני', cat: 'סלטים' },
+                        { name: 'שרימפס על הגריל', cat: 'עיקריות' },
+                        { name: 'פלפלי פדרון מוקפצים', cat: 'ראשונות' },
+                        { name: 'בורגול קפריסאי עם קינואה אדומה', cat: 'תוספות' },
+                        { name: 'צ\'יפס כמהין', cat: 'תוספות' },
+                        { name: 'פסטה עם עוף ברוטב פסטו', cat: 'עיקריות' },
+                        { name: 'ריזוטו זעפרן עם קלמרי מטוגן', cat: 'עיקריות' },
+                        { name: 'סטייק אנטריקוט', cat: 'עיקריות' }
+                    ]
+                },
+                pepper: {
+                    title: 'PEPPER BAR LOUNGE – תפריט (09/09/2026)',
+                    subtitle: 'הוזמן ל-20:30 | שולחנות גבוהים בפנים',
+                    items: [
+                        { name: 'סלט וואקמה עם בוטנים', cat: 'סלטים' },
+                        { name: 'קרפצ\'יו בקר עם כמהין', cat: 'ראשונות' },
+                        { name: 'ספרינג רולס עם ברווז מפורק, ג\'ינג\'ר ותאנים', cat: 'ראשונות' },
+                        { name: 'ארנצ\'יני פטריות', cat: 'ראשונות' },
+                        { name: 'מיני המבורגר בקר עם סלט כרוב אסייתי', cat: 'עיקריות' },
+                        { name: 'אטריות עם עוף', cat: 'עיקריות' },
+                        { name: 'שיפודי בקר תאילנדיים', cat: 'עיקריות' },
+                        { name: 'אורז קוקוס', cat: 'תוספות' },
+                        { name: 'ירקות עונתיים מוקפצים', cat: 'תוספות' },
+                        { name: 'קאטסו עוף עם בטטה', cat: 'עיקריות' },
+                        { name: 'טאקוס טלה', cat: 'עיקריות' },
+                        { name: 'קרם שוקולד ואגוזי לוז', cat: 'קינוחים' }
+                    ]
+                }
+            };
+
+            const giftBag = [
+                { name: 'שוקולד פלורנטין בלגי מריר', weight: '300 גרם', icon: 'fa-cookie-bite', desc: 'איכותי ומפנק' },
+                { name: 'בוטנים מקורמלים', weight: '200 גרם', icon: 'fa-box-open', desc: 'פריכים ומתוקים' },
+                { name: 'פסטלאקי (Pastelaki)', weight: 'יחידה', icon: 'fa-candy-bar', desc: 'ממתק יווני/ים-תיכוני מסורתי מבוסס על שומשום וסוכר/דבש' },
+                { name: 'סוצוקו (Soutzouko)', weight: 'יחידה', icon: 'fa-cubes', desc: 'ממתק מסורתי מיוון וקפריסין מאגוזים (שקדים / אגוזי מלך)' },
+                { name: 'לוקומִי עם פיסטוקים', weight: 'אריזה', icon: 'fa-chess-board', desc: 'רחת לוקום משובחת' }
+            ];
+
+            return (
+                <div className="max-w-5xl mx-auto px-4 py-6">
+                    {/* Header Banner */}
+                    <header className="glass-card rounded-3xl p-6 md:p-8 shadow-xl bg-brand-navy text-white border border-slate-700 mb-8">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <div className="inline-flex items-center gap-2 bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                                    <i className="fa-solid fa-crown"></i> טיול תמריץ יוקרתי
+                                </div>
+                                <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 text-white">
+                                    צור שמיר <span className="text-amber-400">|</span> איה נאפה
+                                </h1>
+                                <p className="text-slate-200 text-base flex items-center gap-4 flex-wrap mt-2">
+                                    <span><i className="fa-regular fa-calendar text-amber-400 ml-1"></i> <b dir="ltr">08/09/2026 – 10/09/2026</b></span>
+                                    <span><i className="fa-solid fa-users text-amber-400 ml-1"></i> <strong>41 משתתפים</strong></span>
+                                    <span><i className="fa-solid fa-hotel text-amber-400 ml-1"></i> Nissi Blu Beach Resort</span>
+                                </p>
+                            </div>
+
+                            <div className="bg-amber-400 text-slate-900 p-4 rounded-2xl shadow-lg border-2 border-amber-300 w-full md:w-80">
+                                <div className="text-xs font-black uppercase tracking-wider mb-2 flex items-center justify-between border-b border-slate-900/20 pb-1">
+                                    <span><i className="fa-solid fa-plane-departure ml-1"></i> טיסות אל על (LY)</span>
+                                    <span className="bg-slate-900 text-amber-400 text-[10px] px-2 py-0.5 rounded-full font-bold">מאושר</span>
+                                </div>
+                                <div className="text-xs space-y-1.5 font-bold">
+                                    <div className="bg-white/90 p-2 rounded-lg flex justify-between items-center">
+                                        <span className="text-brand-blue font-extrabold">הלוך: 08/09</span>
+                                        <span className="font-mono text-xs text-slate-900" dir="ltr">13:05 TLV ➔ 14:15 LCA</span>
+                                    </div>
+                                    <div className="bg-white/90 p-2 rounded-lg flex justify-between items-center">
+                                        <span className="text-brand-blue font-extrabold">חזור: 10/09</span>
+                                        <span className="font-mono text-xs text-slate-900" dir="ltr">18:30 LCA ➔ 19:35 TLV</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Navigation Tabs */}
+                    <nav className="flex gap-2 p-1.5 bg-slate-200 rounded-2xl mb-8 overflow-x-auto hide-scrollbar shadow-inner">
+                        {[
+                            { id: 'schedule', label: 'תוכנית ולו"ז', icon: 'fa-calendar-days' },
+                            { id: 'menus', label: 'תפריטים קולינריים', icon: 'fa-utensils' },
+                            { id: 'questions', label: 'נושאים פתוחים', icon: 'fa-clipboard-check', badge: '5' },
+                            { id: 'gifts', label: 'מתנת סיום', icon: 'fa-gift' },
+                            { id: 'links', label: 'קישורים', icon: 'fa-link' },
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all whitespace-nowrap flex-1 justify-center ${
+                                    activeTab === tab.id
+                                        ? 'bg-white text-brand-navy shadow-md font-bold'
+                                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                                }`}
+                            >
+                                <i className={`fa-solid ${tab.icon}`}></i>
+                                <span>{tab.label}</span>
+                                {tab.badge && (
+                                    <span className="bg-amber-500 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">
+                                        {tab.badge}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {/* TAB 1: SCHEDULE */}
+                    {activeTab === 'schedule' && (
+                        <div>
+                            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    <i className="fa-solid fa-clock text-brand-navy"></i>
+                                    סדר יום מפורט
+                                </h2>
+                                <div className="flex gap-2">
+                                    {[
+                                        { id: 'all', label: 'כל הימים' },
+                                        { id: '1', label: 'יום 1 (08/09)' },
+                                        { id: '2', label: 'יום 2 (09/09)' },
+                                        { id: '3', label: 'יום 3 (10/09)' }
+                                    ].map(btn => (
+                                        <button
+                                            key={btn.id}
+                                            onClick={() => setSelectedDay(btn.id)}
+                                            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                                                selectedDay === btn.id
+                                                    ? 'bg-brand-navy text-white shadow-sm'
+                                                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                                            }`}
+                                        >
+                                            {btn.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-8">
+                                {scheduleData
+                                    .filter(d => selectedDay === 'all' || selectedDay === String(d.id))
+                                    .map((day) => (
+                                        <div key={day.id} className="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+                                            <div className="flex items-center gap-3 border-b border-slate-200 pb-4 mb-6">
+                                                <div className="w-10 h-10 rounded-xl bg-brand-navy text-white flex items-center justify-center font-bold text-lg">
+                                                    0{day.id}
+                                                </div>
+                                                <h3 className="font-bold text-lg text-slate-900">{day.dayName}</h3>
+                                            </div>
+
+                                            <div className="relative border-r-2 border-brand-teal/30 mr-4 space-y-6 pr-6">
+                                                {day.events.map((event, idx) => (
+                                                    <div key={idx} className="relative group">
+                                                        <div className="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-brand-teal group-hover:scale-125 transition-transform"></div>
+
+                                                        <div className="bg-slate-50 hover:bg-white p-4 rounded-xl border border-slate-100 hover:border-slate-300 transition-all">
+                                                            <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                                                                <span className="inline-flex items-center gap-1.5 font-bold text-sm text-brand-blue bg-blue-50 px-2.5 py-1 rounded-md">
+                                                                    <i className={`fa-solid ${event.icon} text-xs`}></i>
+                                                                    {event.time}
+                                                                </span>
+                                                                {event.link && (
+                                                                    <a 
+                                                                        href={event.link} 
+                                                                        target="_blank" 
+                                                                        rel="noopener noreferrer" 
+                                                                        className="text-xs text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1"
+                                                                    >
+                                                                        <span>קישור לאתר</span>
+                                                                        <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                                                    </a>
+                                                                )}
+                                                            </div>
+
+                                                            <h4 className="font-bold text-slate-900 text-base mb-1">{event.title}</h4>
+                                                            <p className="text-slate-600 text-sm leading-relaxed">{event.desc}</p>
+
+                                                            {event.hasMenu && (
+                                                                <button
+                                                                    onClick={() => setActiveTab('menus')}
+                                                                    className="mt-3 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                                                                >
+                                                                    <i className="fa-solid fa-utensils text-emerald-600"></i>
+                                                                    צפה בתפריט המלא
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 2: MENUS */}
+                    {activeTab === 'menus' && (
+                        <div>
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                                <div>
+                                    <h2 className="text-xl font-bold text-slate-800">תפריטי הארוחות והמסעדות</h2>
+                                    <p className="text-xs text-slate-500">תפריטים מלאים מתורגמים לעברית</p>
+                                </div>
+                                <div className="relative w-full md:w-60">
+                                    <input
+                                        type="text"
+                                        placeholder="חפש מנה..."
+                                        value={menuSearch}
+                                        onChange={(e) => setMenuSearch(e.target.value)}
+                                        className="w-full text-xs pl-8 pr-3 py-2 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brand-blue"
+                                    />
+                                    <i className="fa-solid fa-search absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+
+                            <div className="space-y-8">
+                                {Object.keys(menus).map((key) => {
+                                    const menu = menus[key];
+                                    const filteredItems = menu.items.filter(item => 
+                                        item.name.toLowerCase().includes(menuSearch.toLowerCase()) || 
+                                        item.cat.toLowerCase().includes(menuSearch.toLowerCase())
+                                    );
+
+                                    if (filteredItems.length === 0) return null;
+
+                                    return (
+                                        <div key={key} className="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+                                            <div className="border-b border-slate-200 pb-4 mb-4">
+                                                <h3 className="text-lg font-bold text-brand-dark">{menu.title}</h3>
+                                                <p className="text-xs text-slate-500 mt-1">{menu.subtitle}</p>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {filteredItems.map((item, idx) => (
+                                                    <div key={idx} className="p-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between gap-3 shadow-2xs">
+                                                        <span className="font-medium text-sm text-slate-800">{item.name}</span>
+                                                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full flex-shrink-0">
+                                                            {item.cat}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 3: QUESTIONS & DECISIONS (EXACTLY 5 OPEN ITEMS) */}
+                    {activeTab === 'questions' && (
+                        <div>
+                            <div className="mb-6">
+                                <h2 className="text-xl font-bold text-slate-800">נושאים פתוחים לקבוצה (5 נושאים)</h2>
+                                <p className="text-xs text-slate-500">פירוט נושאים לאישור והחלטה</p>
+                            </div>
+
+                            <div className="space-y-4">
+                                {/* Open Item 1: Diving Museum */}
+                                <div className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                    <div className="space-y-2">
+                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded-full">
+                                            <i className="fa-solid fa-water"></i> יום 2 - <span dir="ltr">09/09/2026</span>
+                                        </div>
+                                        <h3 className="text-base font-bold text-slate-900">צלילה למוזיאון התת-ימי (MUSAN)</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">
+                                            האם מעוניינים בצלילה למוזיאון התת ימי ביום של הביץ קלאב (<span dir="ltr">08:00–11:00</span>) ולאחר מכן הצטרפות לביץ קלאב?
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Open Item 2: Dietary Restrictions */}
+                                <div className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                    <div className="space-y-2">
+                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded-full">
+                                            <i className="fa-solid fa-utensils"></i> העדפות תזונה
+                                        </div>
+                                        <h3 className="text-base font-bold text-slate-900">רשימת "Kosher Style" / צמחוני / אלרגיות</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">
+                                            נשמח לקבל העדפות תזונה בהתאם לאלרגיות, צמחונות ורשימת "Kosher Style".
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Open Item 3: Olive Oil Visit (Terra Oliva) */}
+                                <div className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                    <div className="space-y-2">
+                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                                            <i className="fa-solid fa-bottle-droplet"></i> יום 3 - <span dir="ltr">10/09/2026</span>
+                                        </div>
+                                        <h3 className="text-base font-bold text-slate-900">ביקור במפעל שמן זית (TERRA OLIVA)</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">
+                                            לאחר התייעצות עם הספק המקומי, הסיור ב-TERRA OLIVA אינו מתאים לסטנדרט הקבוצה ואף אינו מומלץ בכללי כמקום לביקור.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Open Item 4: Transport Option */}
+                                <div className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                    <div className="space-y-2">
+                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                                            <i className="fa-solid fa-bus"></i> יום 3 - <span dir="ltr">10/09/2026</span>
+                                        </div>
+                                        <h3 className="text-base font-bold text-slate-900">בחירת התחבורה ביום האחרון בלפקרה</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">
+                                            האם מעוניינים בג׳יפים או באוטובוס ביום האחרון?
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Open Item 5: Seating Map (Pepper & Vassos) */}
+                                <div className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                    <div className="space-y-2">
+                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full">
+                                            <i className="fa-solid fa-chair"></i> תמונות ומפת ישיבה
+                                        </div>
+                                        <h3 className="text-base font-bold text-slate-900">תמונות ומפת ישיבה (Pepper Bar Lounge & Vassos)</h3>
+                                        <p className="text-xs text-slate-600 leading-relaxed">
+                                            ממתינים לקבלת תמונות מעודכנות ומפת ישיבה סופית עבור Pepper Bar Lounge ועבור Vassos.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 4: GIFTS */}
+                    {activeTab === 'gifts' && (
+                        <div>
+                            <div className="glass-card rounded-3xl p-6 md:p-8 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 shadow-md mb-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-sm">
+                                        <i className="fa-solid fa-gift"></i>
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-extrabold text-slate-900">מתנת סיום בתוך תיק מעוצב</h2>
+                                        <p className="text-xs text-slate-600">כל משתתף מקבל תיק מעוצב עם חמישה ממתקים ומוצרים מסורתיים</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                                    {giftBag.map((item, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-amber-100 shadow-2xs flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <i className={`fa-solid ${item.icon} text-amber-600 text-lg`}></i>
+                                                    <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                                                        {item.weight}
+                                                    </span>
+                                                </div>
+                                                <h3 className="font-bold text-sm text-slate-900 mb-1">{item.name}</h3>
+                                                <p className="text-xs text-slate-500">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 5: LINKS */}
+                    {activeTab === 'links' && (
+                        <div>
+                            <div className="mb-6">
+                                <h2 className="text-xl font-bold text-slate-800">קישורים ישירים לאתרים ופלטפורמות</h2>
+                                <p className="text-xs text-slate-500">לחצי על הכפתורים לפתיחה ישירה של האתרים בחלון חדש</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[
+                                    { title: 'Nissi Blu Beach Resort', cat: 'מלון', link: 'https://nissiblu.com/', icon: 'fa-hotel', desc: 'אתר המלון הרשמי באיה נאפה' },
+                                    { title: 'LASMARI Beach Club', cat: 'ביץ\' קלאב', link: 'https://lasmaribeach.com/', icon: 'fa-umbrella-beach', desc: 'אתר הביץ\' קלאב בחוף' },
+                                    { title: 'Pepper Bar Lounge', cat: 'בר-לאונג\'', link: 'https://napaplaza.com/pepper-bar-restaurant/', icon: 'fa-martini-glass-citrus', desc: 'אתר הבר-לאונג\' לערב השני' },
+                                    { title: 'The Castle Club', cat: 'מועדון', link: 'https://thecastleclub.com/', icon: 'fa-record-vinyl', desc: 'אתר מועדון הלילה The Castle באיה נאפה' },
+                                    { title: 'Dafermou Winery', cat: 'יקב', link: 'https://dafermouwinery.com/', icon: 'fa-wine-bottle', desc: 'אתר יקב דפרמו בלפקרה' },
+                                    { title: 'Tochni Tavern', cat: 'טברנה', link: 'https://www.tochnitavern.com/', icon: 'fa-utensils', desc: 'אתר מסעדת טוכני טברן' },
+                                    { title: 'Maria\'s Restaurant', cat: 'מסעדה', link: 'https://vavatsiniavillage.com/marias-restaurant/', icon: 'fa-utensils', desc: 'אתר מסעדת מריה בבבציניה' }
+                                ].map((loc, idx) => (
+                                    <div key={idx} className="glass-card p-4 rounded-2xl border border-slate-200 flex items-center justify-between hover:shadow-md transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-brand-navy flex items-center justify-center">
+                                                <i className={`fa-solid ${loc.icon}`}></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-sm text-slate-900">{loc.title}</h3>
+                                                <p className="text-xs text-slate-500">{loc.desc}</p>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href={loc.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3.5 py-2 bg-brand-navy hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
+                                        >
+                                            <span>מעבר לאתר</span>
+                                            <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
