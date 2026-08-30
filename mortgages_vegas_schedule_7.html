@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>קבוצת משכנתאות - לאס וגאס 2026 | תוכנית טיול</title>
+    <!-- React & Babel Core -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            deep: '#22344A',
+                            mid: '#3E5C76',
+                            slate: '#48627A',
+                            sage: '#7A9E86',
+                            sagelight: '#d5e041',
+                            sand: '#EDE9E0',
+                            dark: '#1B2A38',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Rubik', sans-serif; background-color: #F5F6F4; }
+        .glass-card { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('schedule');
+            const [selectedDay, setSelectedDay] = useState('all');
+
+            // Days Data
+            const scheduleData = [
+                {
+                    id: 1,
+                    date: '08/11/2026',
+                    dayName: 'יום ראשון | 08/11/2026 – הגעה וקבלת פנים',
+                    events: [
+                        { time: '13:13', title: 'נחיתה בנמל התעופה מקארן, לאס וגאס', icon: 'fa-plane-arrival', desc: 'טיסת JetBlue מספר B6 511. איסוף כבודה והתארגנות.' },
+                        { time: '~14:00', title: 'יציאה מנמל התעופה', icon: 'fa-car', desc: 'יציאה מהשדה לאחר קבלת הכבודה, בליווי לימוזינות ארוכות / אוטובוסי מסיבה.' },
+                        { time: '14:00 - 15:30', title: 'ארוחת צהריים קלה / בראנץ׳', icon: 'fa-mug-hot', desc: 'ארוחה קלילה באווירת רופטופ, לפני ההתארגנות במלון.' },
+                        { time: '~16:00', title: 'צ׳ק-אין למלון Wynn Las Vegas', icon: 'fa-hotel', desc: 'קבלת פנים, חלוקת חדרים וזמן חופשי עד 21:00.' },
+                        { time: '16:00 - 21:00', title: 'זמן חופשי במלון', icon: 'fa-umbrella-beach', desc: 'זמן פנוי להתרעננות.' },
+                        { time: '21:00', title: 'ארוחת ערב עם מופע', icon: 'fa-utensils', desc: 'ארוחת ערב חגיגית עם מופע בידור. שם המקום בתיאום מול הספק המקומי.' }
+                    ]
+                },
+                {
+                    id: 2,
+                    date: '09/11/2026',
+                    dayName: 'יום שני | 09/11/2026 – אופציה לאדרנלין/ספא, The Sphere וערב ב-Hakkasan',
+                    events: [
+                        { time: '11:00 - 15:00', title: 'אופציה לבחירה: פעילות אדרנלין במדבר או פינוק ספא', icon: 'fa-mountain-sun', desc: 'פעילות של כחצי יום, בין השעות 11:00-15:00, לבחירת הקבוצה: חוויה אתגרית ומלאת אדרנלין בנופי המדבר, או לחלופין פינוק ספא מרגיע ומפנק.' },
+                        { time: '16:30', title: 'חזרה למלון להתארגנות', icon: 'fa-couch', desc: 'חזרה לחדרים ולהתארגנות לקראת היציאה למופע הערב.' },
+                        { time: '17:00', title: 'מופע ב-The Sphere', icon: 'fa-circle-notch', desc: 'מופע ייחודי ומרהיב באולם The Sphere, המציע חוויה חזותית וקולית יוצאת דופן, באורך של כ-75 דקות.' },
+                        { time: '20:30', title: 'אופציה לארוחת ערב במסעדת שף', icon: 'fa-utensils', desc: 'אפשרות לארוחת ערב במסעדת שף Hakkasan, מהמסעדות המובילות בלאס וגאס.' },
+                        { time: '23:00', title: 'מועדון Hakkasan', icon: 'fa-music', desc: 'המשך הערב במועדון הלילה היוקרתי Hakkasan.' }
+                    ]
+                },
+                {
+                    id: 3,
+                    date: '10/11/2026',
+                    dayName: 'יום שלישי | 10/11/2026 – פעילות פתוחה, הליקופטר לגרנד קניון וערב ב-Omnia',
+                    events: [
+                        { time: 'צהריים', title: 'פעילות פתוחה לתיאום', icon: 'fa-list-check', desc: 'פעילות מוקדמת בשעות הצהריים - נושא פתוח לדיון ולאישור.' },
+                        { time: 'אחה"צ', title: 'טיסת הליקופטר לגרנד קניון', icon: 'fa-helicopter', desc: 'טיסת מסוק ייחודית אל עבר הגרנד קניון, בתזמון מדויק לקראת השקיעה - נופי מדבר עוצרי נשימה ממעוף הציפור. בדרך חזרה, המסוק חג מעל רצועת לאס וגאס המוארת, ומעניק חוויה בלתי נשכחת של העיר הנוצצת מהאוויר. הפעילות, באורך כולל של כ-3.5 שעות (מתוכן כ-45 דקות טיסה), כוללת גם עצירה לשתיית שמפניה ונשנושים מול הנוף. 7 נוסעים בכל הליקופטר.' },
+                        { time: 'ערב', title: 'חזרה למלון, אופציה לארוחת ערב ומועדון Omnia', icon: 'fa-champagne-glasses', desc: 'חזרה למלון, עם אפשרות לארוחת ערב במועדון Omnia ולהמשך בילוי הלילה באותו מקום.' }
+                    ]
+                },
+                {
+                    id: 4,
+                    date: '11/11/2026',
+                    dayName: 'יום רביעי | 11/11/2026 – שופינג וערב חופשי',
+                    events: [
+                        { time: 'בוקר-צהריים', title: 'שופינג עם הסעות ייעודיות', icon: 'fa-bag-shopping', desc: 'הסעות מאורגנות (שאטלים) לאזורי הקניות המובילים בעיר.' },
+                        { time: 'ערב', title: 'ארוחת ערב', icon: 'fa-utensils', desc: 'ארוחת ערב מסכמת. שם המקום בתיאום מול הספק המקומי.' }
+                    ]
+                },
+                {
+                    id: 5,
+                    date: '12/11/2026',
+                    dayName: 'יום חמישי | 12/11/2026 – טיסות חזרה',
+                    events: [
+                        { time: '08:58', title: 'טיסה מוקדמת לניו יורק (JFK)', icon: 'fa-plane-departure', desc: 'טיסת AA 703, המראה מלאס וגאס בשעה 08:58 בבוקר.' }
+                    ]
+                }
+            ];
+
+            const openTopics = [
+                {
+                    tag: 'יום 2 - 09/11/2026',
+                    tagColor: 'bg-brand-sagelight/60 text-brand-deep',
+                    icon: 'fa-mountain-sun',
+                    title: 'בחירה סופית בין פעילות אדרנלין במדבר לבין ספא',
+                    desc: 'יש להחליט האם הקבוצה בוחרת בפעילות אתגרית במדבר או בפינוק ספא, בחלון הזמן שבין 11:00-15:00 ביום השני.'
+                },
+                {
+                    tag: 'יום 1 - 08/11/2026',
+                    tagColor: 'bg-slate-100 text-slate-700',
+                    icon: 'fa-utensils',
+                    title: 'מקום ארוחת הערב הראשונה',
+                    desc: 'ארוחת הערב עם המופע בליל ההגעה - שם המקום ממתין לאישור סופי מול הספק.'
+                },
+                {
+                    tag: 'יום 4 - 11/11/2026',
+                    tagColor: 'bg-slate-100 text-slate-700',
+                    icon: 'fa-utensils',
+                    title: 'מקום ארוחת הערב ביום השופינג',
+                    desc: 'ארוחת הערב של יום רביעי - שם המקום ממתין לאישור סופי מול הספק.'
+                },
+                {
+                    tag: 'לוגיסטיקה - הליקופטרים',
+                    tagColor: 'bg-brand-sagelight/60 text-brand-deep',
+                    icon: 'fa-helicopter',
+                    title: 'חלוקת הקבוצה לטיסות הליקופטר',
+                    desc: 'עם 58 משתתפים ו-7 נוסעים בכל הליקופטר, נדרשות כ-9 טיסות הליקופטר בסבבים סביב שעת השקיעה. יש לתאם מול הספק המקומי את סדר הסבבים וזמני ההמתנה בין הטיסות.'
+                },
+                {
+                    tag: 'יום 5 - 12/11/2026',
+                    tagColor: 'bg-slate-100 text-slate-700',
+                    icon: 'fa-plane-departure',
+                    title: 'המשך מסלול הטיסה חזרה ארצה',
+                    desc: 'קטע הטיסה הראשון מלאס וגאס לניו יורק (JFK) מאושר - טיסת AA 703 בשעה 08:58. פרטי המשך המסלול מניו יורק ארצה ממתינים לעדכון.'
+                }
+            ];
+
+            return (
+                <div className="max-w-5xl mx-auto px-4 py-6">
+                    {/* Header Banner */}
+                    <header className="glass-card rounded-3xl p-6 md:p-8 shadow-xl bg-brand-deep text-white border border-slate-700 mb-8">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <div className="inline-flex items-center gap-2 bg-brand-sage/20 text-brand-sagelight border border-brand-sage/30 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                                    <i className="fa-solid fa-briefcase"></i> טיול תמריץ - קבוצת משכנתאות
+                                </div>
+                                <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 text-white">
+                                    משכנתאות <span className="text-brand-sagelight">|</span> לאס וגאס
+                                </h1>
+                                <p className="text-slate-200 text-base flex items-center gap-4 flex-wrap mt-2">
+                                    <span><i className="fa-regular fa-calendar text-brand-sagelight ml-1"></i> <b dir="ltr">08/11/2026 – 12/11/2026</b></span>
+                                    <span><i className="fa-solid fa-users text-brand-sagelight ml-1"></i> <strong>58 משתתפים</strong></span>
+                                    <span><i className="fa-solid fa-hotel text-brand-sagelight ml-1"></i> Wynn Las Vegas</span>
+                                </p>
+                            </div>
+
+                            <div className="bg-brand-sand text-slate-900 p-4 rounded-2xl shadow-lg border-2 border-brand-sagelight w-full md:w-80">
+                                <div className="text-xs font-black uppercase tracking-wider mb-2 flex items-center justify-between border-b border-slate-900/20 pb-1">
+                                    <span><i className="fa-solid fa-plane-departure ml-1"></i> פרטי טיסות</span>
+                                    <span className="bg-brand-deep text-brand-sagelight text-[10px] px-2 py-0.5 rounded-full font-bold">בתהליך</span>
+                                </div>
+                                <div className="text-xs space-y-1.5 font-bold">
+                                    <div className="bg-white/90 p-2 rounded-lg flex justify-between items-center">
+                                        <span className="text-brand-mid font-extrabold">הלוך: 08/11</span>
+                                        <span className="font-mono text-xs text-slate-900" dir="ltr">B6 511 · נחיתה 13:13</span>
+                                    </div>
+                                    <div className="bg-white/90 p-2 rounded-lg flex justify-between items-center">
+                                        <span className="text-brand-mid font-extrabold">חזור: 12/11</span>
+                                        <span className="font-mono text-xs text-slate-900" dir="ltr">AA 703 · 08:58 LAS→JFK</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Navigation Tabs */}
+                    <nav className="flex gap-2 p-1.5 bg-slate-200 rounded-2xl mb-8 overflow-x-auto hide-scrollbar shadow-inner">
+                        {[
+                            { id: 'schedule', label: 'תוכנית ולו"ז', icon: 'fa-calendar-days' },
+                            { id: 'topics', label: 'נושאים פתוחים', icon: 'fa-clipboard-check', badge: '5' },
+                            { id: 'links', label: 'קישורים', icon: 'fa-link' },
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all whitespace-nowrap flex-1 justify-center ${
+                                    activeTab === tab.id
+                                        ? 'bg-white text-brand-deep shadow-md font-bold'
+                                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                                }`}
+                            >
+                                <i className={`fa-solid ${tab.icon}`}></i>
+                                <span>{tab.label}</span>
+                                {tab.badge && (
+                                    <span className="bg-brand-sage text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">
+                                        {tab.badge}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {/* TAB 1: SCHEDULE */}
+                    {activeTab === 'schedule' && (
+                        <div>
+                            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 flex-wrap">
+                                    <i className="fa-solid fa-clock text-brand-deep"></i>
+                                    סדר יום מפורט
+                                    <span className="text-xs font-semibold text-brand-deep bg-brand-sagelight/40 px-2.5 py-1 rounded-full">אופציה ראשונית לקבוצה</span>
+                                </h2>
+                                <div className="flex gap-2 flex-wrap">
+                                    {[
+                                        { id: 'all', label: 'כל הימים' },
+                                        { id: '1', label: 'יום 1 (08/11)' },
+                                        { id: '2', label: 'יום 2 (09/11)' },
+                                        { id: '3', label: 'יום 3 (10/11)' },
+                                        { id: '4', label: 'יום 4 (11/11)' },
+                                        { id: '5', label: 'יום 5 (12/11)' }
+                                    ].map(btn => (
+                                        <button
+                                            key={btn.id}
+                                            onClick={() => setSelectedDay(btn.id)}
+                                            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                                                selectedDay === btn.id
+                                                    ? 'bg-brand-deep text-white shadow-sm'
+                                                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                                            }`}
+                                        >
+                                            {btn.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-8">
+                                {scheduleData
+                                    .filter(d => selectedDay === 'all' || selectedDay === String(d.id))
+                                    .map((day) => (
+                                        <div key={day.id} className="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+                                            <div className="flex items-center gap-3 border-b border-slate-200 pb-4 mb-6">
+                                                <div className="w-10 h-10 rounded-xl bg-brand-deep text-white flex items-center justify-center font-bold text-lg">
+                                                    0{day.id}
+                                                </div>
+                                                <h3 className="font-bold text-lg text-slate-900">{day.dayName}</h3>
+                                            </div>
+
+                                            <div className="relative border-r-2 border-brand-sage/30 mr-4 space-y-6 pr-6">
+                                                {day.events.map((event, idx) => (
+                                                    <div key={idx} className="relative group">
+                                                        <div className="absolute -right-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-brand-sage group-hover:scale-125 transition-transform"></div>
+
+                                                        <div className="bg-slate-50 hover:bg-white p-4 rounded-xl border border-slate-100 hover:border-slate-300 transition-all">
+                                                            <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                                                                <span className="inline-flex items-center gap-1.5 font-bold text-sm text-brand-mid bg-blue-50 px-2.5 py-1 rounded-md">
+                                                                    <i className={`fa-solid ${event.icon} text-xs`}></i>
+                                                                    {event.time}
+                                                                </span>
+                                                            </div>
+
+                                                            <h4 className="font-bold text-slate-900 text-base mb-1">{event.title}</h4>
+                                                            <p className="text-slate-600 text-sm leading-relaxed">{event.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 2: OPEN TOPICS */}
+                    {activeTab === 'topics' && (
+                        <div>
+                            <div className="mb-6">
+                                <h2 className="text-xl font-bold text-slate-800">נושאים פתוחים לקבוצה (5 נושאים)</h2>
+                                <p className="text-xs text-slate-500">פירוט נושאים הממתינים לאישור או להחלטה</p>
+                            </div>
+
+                            <div className="space-y-4">
+                                {openTopics.map((topic, idx) => (
+                                    <div key={idx} className="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                        <div className="space-y-2">
+                                            <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full ${topic.tagColor}`}>
+                                                <i className={`fa-solid ${topic.icon}`}></i> {topic.tag}
+                                            </div>
+                                            <h3 className="text-base font-bold text-slate-900">{topic.title}</h3>
+                                            <p className="text-xs text-slate-600 leading-relaxed">{topic.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* TAB 3: LINKS */}
+                    {activeTab === 'links' && (
+                        <div>
+                            <div className="mb-6">
+                                <h2 className="text-xl font-bold text-slate-800">קישורים ישירים לאתרים ופלטפורמות</h2>
+                                <p className="text-xs text-slate-500">לחצו על הכפתורים לפתיחה ישירה של האתרים בחלון חדש</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {[
+                                    { title: 'Wynn Las Vegas', cat: 'מלון', link: 'https://www.wynnlasvegas.com/', icon: 'fa-hotel', desc: 'אתר המלון הרשמי' },
+                                    { title: 'The Sphere', cat: 'מופע', link: 'https://www.thesphere.com/', icon: 'fa-circle-notch', desc: 'אתר האולם והמופעים' },
+                                    { title: 'Hakkasan Las Vegas', cat: 'מסעדה ומועדון', link: 'https://hakkasangroup.com/las-vegas/', icon: 'fa-utensils', desc: 'מסעדה ומועדון הלילה' },
+                                    { title: 'Omnia Nightclub', cat: 'מועדון', link: 'https://omnianightclub.com/', icon: 'fa-champagne-glasses', desc: 'מועדון הלילה במלון Caesars Palace, עם אפשרות לארוחת ערב במקום' }
+                                ].map((loc, idx) => (
+                                    <div key={idx} className="glass-card p-4 rounded-2xl border border-slate-200 flex items-center justify-between hover:shadow-md transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-brand-deep flex items-center justify-center">
+                                                <i className={`fa-solid ${loc.icon}`}></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-sm text-slate-900">{loc.title}</h3>
+                                                <p className="text-xs text-slate-500">{loc.desc}</p>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href={loc.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3.5 py-2 bg-brand-deep hover:bg-brand-mid text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
+                                        >
+                                            <span>מעבר לאתר</span>
+                                            <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
