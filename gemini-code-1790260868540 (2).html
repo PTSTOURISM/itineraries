@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסלול טיול בפריז - אורית חי ראובן</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f472b6',
+                            400: '#e879f9',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843'
+                        }
+                    },
+                    fontFamily: {
+                        hebrew: ['Assistant', 'Rubik', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            font-family: 'Assistant', 'Rubik', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #ec4899;
+            border-radius: 4px;
+        }
+        .clean-panel {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px -2px rgba(236, 72, 153, 0.08);
+        }
+        .clean-card {
+            background: #fafafa;
+            border: 1px solid #f1f5f9;
+            transition: all 0.2s ease;
+        }
+        .clean-card:hover {
+            border-color: #fbcfe8;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.08);
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 0.75rem;
+            z-index: 1;
+        }
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            border: 1px solid #f472b6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-slate-800">
+
+    <!-- Header Navigation -->
+    <header class="bg-white sticky top-0 z-50 px-4 lg:px-8 py-4 border-b border-pink-100 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
+                    <i class="fa-solid font-bold text-xl fa-plane-departure"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                        חופשה בפריז
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">עבור: <span class="text-pink-600 font-semibold">אורית חי ראובן</span> (3 אורחים)</p>
+                </div>
+            </div>
+
+            <!-- Quick Status Badges -->
+            <div class="flex flex-wrap gap-2 text-xs">
+                <div class="px-3 py-1.5 rounded-full bg-pink-50 border border-pink-200 text-pink-700 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar text-pink-500"></i>
+                    <span>30.09.2026 - 05.10.2026</span>
+                </div>
+                <div class="px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-hotel text-pink-500"></i>
+                    <span>THE PENINSULA PARIS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Tabs & Daily Itinerary Timeline -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+
+            <!-- Dynamic Day Tabs -->
+            <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar" id="day-tabs">
+                <!-- JS will inject daily tabs here -->
+            </div>
+
+            <!-- Active Day Content Area -->
+            <div id="day-content" class="flex flex-col gap-4">
+                <!-- JS will inject timeline for selected day here -->
+            </div>
+
+        </section>
+
+        <!-- Right Column: Interactive Map & Hotel / Flight Summary -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+
+            <!-- Leaflet Interactive Map Card -->
+            <div class="clean-panel p-4 rounded-2xl flex flex-col h-[380px] relative">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-pink-500"></i>
+                        מפת היעדים ליום הנבחר
+                    </h3>
+                    <span id="map-target-label" class="text-xs text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full font-medium">כל היעדים</span>
+                </div>
+                <div class="flex-1 rounded-xl overflow-hidden border border-slate-200">
+                    <div id="map"></div>
+                </div>
+            </div>
+
+            <!-- Hotel Accommodation Card -->
+            <div class="clean-panel p-5 rounded-2xl">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-pink-500">אירוח ולינה</span>
+                        <h3 class="text-lg font-bold text-slate-900">THE PENINSULA PARIS</h3>
+                    </div>
+                    <div class="p-2 rounded-xl bg-pink-50 text-pink-500">
+                        <i class="fa-solid fa-hotel text-xl"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                    כולל ארוחת בוקר אמריקאית (American Breakfast) לכל האורחים.
+                </p>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs flex items-center justify-between">
+                    <span class="text-slate-500"><i class="fa-solid fa-phone text-pink-500 me-2"></i>צוות הקונסיירז':</span>
+                    <a href="tel:+33158126504" class="text-pink-600 hover:text-pink-700 font-mono dir-ltr font-semibold">+33 1 58 12 65 04</a>
+                </div>
+            </div>
+
+            <!-- Flight & Airport Transfer Card -->
+            <div class="clean-panel p-5 rounded-2xl">
+                <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-plane text-pink-500"></i>
+                    פרטי טיסות והעברות
+                </h3>
+                
+                <div class="space-y-3 text-xs">
+                    <!-- Flight Outward -->
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="flex justify-between text-slate-800 font-semibold mb-1">
+                            <span>הלוך: TLV ➔ CDG (LY323)</span>
+                            <span class="text-pink-600">30/09/2026</span>
+                        </div>
+                        <p class="text-slate-500">המראה: 10:00 | נחיתה: 13:50 (טרמינל 2B)</p>
+                        <div class="mt-2 text-[11px] text-pink-800 bg-pink-50/80 p-2.5 rounded-lg border border-pink-100 leading-relaxed">
+                            <strong>MEET AND GREET SERVICE:</strong> נציג ימתין בדלת המטוס, מעבר מהיר בביקורת דרכונים, טיפול בכבודה והעברה פרטית למלון.
+                        </div>
+                    </div>
+
+                    <!-- Flight Return -->
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="flex justify-between text-slate-800 font-semibold mb-1">
+                            <span>חזור: CDG ➔ TLV (LY324)</span>
+                            <span class="text-pink-600">05/10/2026</span>
+                        </div>
+                        <p class="text-slate-500">המראה: 15:35 | נחיתה: 20:55</p>
+                        <div class="mt-2 text-[11px] text-slate-600">
+                            <strong>איסוף מהמלון לשדה:</strong> בשעה 12:00.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 mt-auto py-4 px-6 border-t border-slate-200 text-center text-xs text-slate-500">
+        <p>© 2026 אפליקציית מסלול טיול | אורית חי ראובן - פריז</p>
+    </footer>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Centralized data structure for all days in the itinerary
+        const itineraryData = [
+            {
+                date: "30.09.2026",
+                dayName: "רביעי",
+                title: "הגעה לפריז וצ'ק-אין",
+                subtitle: "שירות קבלת פנים, העברה פרטית והתארגנות במלון",
+                highlights: [
+                    { time: "10:00", title: "המראה מנתב\"ג", desc: "טיסת אל על LY323 מ-TLV ל-CDG", icon: "fa-plane-departure" },
+                    { time: "13:50", title: "נחיתה בפריז (טרמינל 2B)", desc: "נציג ימתין בדלת המטוס (MEET AND GREET SERVICE), מעבר מהיר בביקורת דרכונים וטיפול בכבודה.", icon: "fa-plane-arrival", vip: true },
+                    { time: "14:30", title: "העברה פרטית למלון", desc: "הסעה ישירה מנמל התעופה Charles de Gaulle למלון The Peninsula Paris.", icon: "fa-car-side" },
+                    { time: "15:30", title: "צ'ק-אין ב-THE PENINSULA PARIS", desc: "קבלת החדר והתארגנות במלון.", icon: "fa-key" }
+                ],
+                locations: [
+                    { name: "נמל התעופה CDG", lat: 49.0097, lng: 2.5479, desc: "נחיתה בטרמינל 2B" },
+                    { name: "The Peninsula Paris", lat: 48.8706, lng: 2.2934, desc: "המלון שלכם" }
+                ]
+            },
+            {
+                date: "01.10.2026",
+                dayName: "חמישי",
+                title: "ארוחת ערב במסעדת TEKES",
+                subtitle: "חוויה קולינרית בשעות הערב",
+                highlights: [
+                    { time: "21:00", title: "ארוחת ערב במסעדת TEKES", desc: "הזמנה ל-3 אנשים. קוד לבוש: Casual. התקנון קובע כי המקום שומר לעצמו את הזכות לסרב לכניסה במקרה של איחור מעל 15 דקות.", icon: "fa-utensils", alert: "נא להגיע בזמן (איחור מעל 15 דק' עלול למנוע כניסה)" }
+                ],
+                locations: [
+                    { name: "מסעדת TEKES", lat: 48.8681, lng: 2.3458, desc: "הזמנה לשעה 21:00" }
+                ]
+            },
+            {
+                date: "02.10.2026",
+                dayName: "שישי",
+                title: "ארוחת ערב במסעדת VERDE",
+                subtitle: "בילוי ערב במסעדה",
+                highlights: [
+                    { time: "20:30", title: "ארוחת ערב במסעדת VERDE", desc: "הזמנה מובטחת ל-3 אנשים בשעה 20:30.", icon: "fa-utensils" }
+                ],
+                locations: [
+                    { name: "מסעדת VERDE", lat: 48.8672, lng: 2.3060, desc: "הזמנה לשעה 20:30" }
+                ]
+            },
+            {
+                date: "03.10.2026",
+                dayName: "שבת",
+                title: "צהריים ב-Loulou והופעה של סלין דיון",
+                subtitle: "אירועים מיוחדים, קולינריה ומוזיקה",
+                highlights: [
+                    { time: "אירוע עירוני", title: "מצעד הגאווה בפריז", desc: "ציון מצעד הגאווה ברחבי העיר במהלך היום.", icon: "fa-rainbow", alert: "שימו לב: ייתכן ויהיו חסימות תנועה ברחבי העיר עקב המצעד" },
+                    { time: "14:30", title: "ארוחת צהריים במסעדת Loulou", desc: "הוזמן ל-3 אנשים (מחכים לעדכון לגבי הישיבה בטרסה). קוד לבוש: Smart casual. ביטול מתחת ל-48 שעות יגרור חיוב של 50€ לאדם. איחור מעל 15 דק' או אי-עמידה בקוד לבוש (ללא ספורט, כובעים, מכנסיים קצרים, ג'ינס קרוע או כפכפים) עלולים למנוע כניסה.", icon: "fa-utensils", alert: "נא להקפיד על קוד הלבוש ולהגיע בזמן" },
+                    { time: "חשוב!", title: "בדיקת ברקוד לכרטיסי ההופעה", desc: "נא לוודא ברקוד פעיל באפליקציה החל מיום שבת.", icon: "fa-qrcode", vip: true },
+                    { time: "19:30-23:00", title: "הופעה של סלין דיון", desc: "כרטיסים בגוש M. ברקוד באפליקציה.", icon: "fa-ticket" }
+                ],
+                locations: [
+                    { name: "מסעדת Loulou", lat: 48.8631, lng: 2.3331, desc: "צהריים 14:30" },
+                    { name: "הופעה של סלין דיון (גוש M)", lat: 48.8386, lng: 2.3785, desc: "הופעה 19:30-23:00" }
+                ]
+            },
+            {
+                date: "04.10.2026",
+                dayName: "ראשון",
+                title: "ארוחת ערב במסעדת Matsuhisa",
+                subtitle: "חוויה קולינרית בשעות הערב",
+                highlights: [
+                    { time: "21:00", title: "ארוחת ערב במסעדת Matsuhisa", desc: "הזמנה ל-3 אנשים. קוד לבוש: Smart casual. ביטול מתחת ל-48 שעות יגרור חיוב של 50€ לאדם. ללא קישור אשראי מלא ההזמנה עלולה להתבטל. איחור מעל 15 דק' או אי-עמידה בקוד לבוש (ללא ספורט, כובעים, מכנסיים קצרים, ג'ינס קרוע או כפכפים) עלולים למנוע כניסה.", icon: "fa-utensils", alert: "נא להקפיד על קוד לבוש ועמידה בזמנים" }
+                ],
+                locations: [
+                    { name: "מסעדת Matsuhisa", lat: 48.8712, lng: 2.3021, desc: "ארוחת ערב 21:00" }
+                ]
+            },
+            {
+                date: "05.10.2026",
+                dayName: "שני",
+                title: "יציאה לשדה התעופה וטיסה חזרה",
+                subtitle: "איסוף מהמלון וטיסה לתל אביב",
+                highlights: [
+                    { time: "12:00", title: "איסוף מהמלון לשדה התעופה", desc: "איסוף מ-The Peninsula Paris לכיוון שדה התעופה CDG.", icon: "fa-car-side" },
+                    { time: "15:35", title: "טיסה חזרה לישראל", desc: "טיסת אל על LY324 מפריז לתל אביב. נחיתה בנתב\"ג בשעה 20:55.", icon: "fa-plane-arrival" }
+                ],
+                locations: [
+                    { name: "The Peninsula Paris", lat: 48.8706, lng: 2.2934, desc: "איסוף ב-12:00" },
+                    { name: "נמל התעופה CDG", lat: 49.0097, lng: 2.5479, desc: "טיסה ב-15:35" }
+                ]
+            }
+        ];
+
+        let activeDayIndex = 0;
+        let map = null;
+        let mapMarkers = [];
+
+        // Initialize Leaflet Map
+        function initMap() {
+            map = L.map('map').setView([48.8566, 2.3522], 12);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                maxZoom: 19
+            }).addTo(map);
+
+            updateMapMarkers();
+        }
+
+        // Dynamically update map pins according to selected day
+        function updateMapMarkers() {
+            if (!map) return;
+
+            // Clear existing pins
+            mapMarkers.forEach(m => map.removeLayer(m));
+            mapMarkers = [];
+
+            const currentDay = itineraryData[activeDayIndex];
+            const bounds = L.latLngBounds();
+
+            currentDay.locations.forEach(loc => {
+                const marker = L.marker([loc.lat, loc.lng])
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="font-family: Assistant, sans-serif; text-align: right;">
+                            <strong style="color: #db2777; font-size: 14px;">${loc.name}</strong><br/>
+                            <span style="font-size: 12px; color: #475569;">${loc.desc}</span>
+                        </div>
+                    `);
+                
+                mapMarkers.push(marker);
+                bounds.extend([loc.lat, loc.lng]);
+            });
+
+            if (currentDay.locations.length > 0) {
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+            }
+
+            document.getElementById('map-target-label').innerText = `${currentDay.dayName} (${currentDay.date})`;
+        }
+
+        // Render Day Navigation Buttons
+        function renderTabs() {
+            const tabsContainer = document.getElementById('day-tabs');
+            tabsContainer.innerHTML = '';
+
+            itineraryData.forEach((day, index) => {
+                const isActive = index === activeDayIndex;
+                const tab = document.createElement('button');
+                tab.className = `flex flex-col items-center min-w-[100px] py-2.5 px-4 rounded-xl border text-xs font-medium transition-all duration-200 ${
+                    isActive 
+                    ? 'bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-200 scale-[1.02]' 
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-pink-300 hover:text-pink-600'
+                }`;
+
+                tab.onclick = () => {
+                    activeDayIndex = index;
+                    renderTabs();
+                    renderContent();
+                    updateMapMarkers();
+                };
+
+                tab.innerHTML = `
+                    <span class="font-bold text-sm">${day.dayName}</span>
+                    <span class="text-[11px] opacity-90">${day.date}</span>
+                `;
+
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        // Render Current Active Day Timeline
+        function renderContent() {
+            const container = document.getElementById('day-content');
+            const day = itineraryData[activeDayIndex];
+
+            let html = `
+                <div class="clean-panel p-5 rounded-2xl mb-2">
+                    <div class="flex justify-between items-start flex-wrap gap-2">
+                        <div>
+                            <span class="text-xs font-semibold text-pink-600 uppercase tracking-wider">לוח זמנים יומי</span>
+                            <h2 class="text-xl font-bold text-slate-900">${day.title}</h2>
+                            <p class="text-xs text-slate-500 mt-1">${day.subtitle}</p>
+                        </div>
+                        <div class="px-3 py-1 bg-pink-50 border border-pink-200 rounded-lg text-pink-700 text-xs font-bold">
+                            יום ${day.dayName} | ${day.date}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative pl-4 pr-2 space-y-4 before:absolute before:right-[19px] before:top-3 before:bottom-3 before:w-0.5 before:bg-pink-200">
+            `;
+
+            day.highlights.forEach(item => {
+                html += `
+                    <div class="relative flex gap-4 items-start group">
+                        <!-- Timeline Icon Circle -->
+                        <div class="w-10 h-10 rounded-full ${item.vip ? 'bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md' : 'bg-white border border-pink-200 text-pink-600'} flex items-center justify-center shrink-0 z-10">
+                            <i class="fa-solid ${item.icon} text-sm"></i>
+                        </div>
+
+                        <!-- Event Description Card -->
+                        <div class="flex-1 clean-card p-4 rounded-xl space-y-1">
+                            <div class="flex justify-between items-center flex-wrap gap-2">
+                                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    ${item.title}
+                                    ${item.vip ? '<span class="px-2 py-0.5 text-[10px] bg-pink-100 text-pink-700 font-semibold rounded-full">VIP</span>' : ''}
+                                </h4>
+                                <span class="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dir-ltr">${item.time}</span>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">${item.desc}</p>
+
+                            ${item.alert ? `
+                                <div class="mt-2 text-[11px] bg-rose-50 border border-rose-200 text-rose-700 p-2.5 rounded-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+                                    <span>${item.alert}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // Initialize App on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            renderContent();
+            initMap();
+        });
+    </script>
+</body>
+</html>
