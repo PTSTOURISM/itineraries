@@ -1,0 +1,313 @@
+<title>Las Vegas Site Inspection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: calm itinerary sheet — summary up top, sticky day strip, one timeline per day, contacts at the end */
+:root{
+  --bg:#F2F5F5; --surface:#FFFFFF; --ink:#1E2D33; --muted:#5B6D74; --line:#DCE4E5;
+  --accent:#3B7880; --accent-soft:#E2EEEF;
+  --ok:#2C7656; --ok-bg:#E1F0E7; --wait:#94640F; --wait-bg:#FAEFD8;
+  --flag:#9C4537; --flag-bg:#F7E5E0;
+  --display:"Fraunces", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11181B; --surface:#192327; --ink:#E1EAEC; --muted:#98ABB1; --line:#29373C;
+  --accent:#7DB8BF; --accent-soft:#1D3236;
+  --ok:#7FCDA6; --ok-bg:#163026; --wait:#E5B45E; --wait-bg:#372C16;
+  --flag:#EC9C8D; --flag-bg:#3A221D; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#11181B; --surface:#192327; --ink:#E1EAEC; --muted:#98ABB1; --line:#29373C;
+  --accent:#7DB8BF; --accent-soft:#1D3236;
+  --ok:#7FCDA6; --ok-bg:#163026; --wait:#E5B45E; --wait-bg:#372C16;
+  --flag:#EC9C8D; --flag-bg:#3A221D; color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 56px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin-inline:auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+
+/* Header */
+.top{padding-block:40px 24px;display:grid;gap:10px}
+.top h1{font-family:var(--display);font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.05;letter-spacing:-.01em}
+.top .dates{font-size:18px;color:var(--muted)}
+.top .dates b{color:var(--ink);font-weight:600}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-block:8px 28px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.fact .k{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fact .v{font-weight:600;font-size:15px}
+.fact .s{font-size:13.5px;color:var(--muted)}
+.tally{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+
+/* Pills */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.wait{background:var(--wait-bg);color:var(--wait)}
+
+/* Attention panel */
+.attn{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:28px}
+.attn h2{font-family:var(--display);font-weight:500;font-size:22px;margin-bottom:4px}
+.attn > p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.attn ol{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.attn li{display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:start;font-size:14.5px}
+.attn li .tag{justify-self:start;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:1px}
+.tag.flag{background:var(--flag-bg);color:var(--flag)}
+.tag.pay{background:var(--wait-bg);color:var(--wait)}
+.tag.tba{background:var(--accent-soft);color:var(--accent)}
+.attn li b{font-weight:600}
+
+/* Day strip */
+.strip{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.strip nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.strip nav::-webkit-scrollbar{display:none}
+.strip a{flex:1 0 auto;min-width:64px;display:grid;justify-items:center;padding:6px 10px;border-radius:10px;text-decoration:none;color:var(--muted);border:1px solid transparent;font-variant-numeric:tabular-nums}
+.strip a b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.strip a span{font-family:var(--display);font-size:20px;line-height:1.1;color:var(--ink)}
+.strip a:hover{background:var(--surface);border-color:var(--line)}
+.strip a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.strip a.today{background:var(--accent);color:var(--surface)}
+.strip a.today span{color:var(--surface)}
+
+/* Days */
+.day{padding-block:28px 8px;scroll-margin-top:84px}
+.dayhead{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;padding-bottom:14px;border-bottom:2px solid var(--accent)}
+.dh-date{display:grid;line-height:1.1}
+.dow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.dt{font-family:var(--display);font-size:28px;font-weight:500;font-variant-numeric:tabular-nums}
+.dh-meta{display:grid;gap:2px;min-width:0;justify-items:end;text-align:right}
+.dh-meta h2{font-size:17px;font-weight:600}
+.where{font-size:13.5px;color:var(--muted)}
+.day.is-today .dayhead::after{content:"Today in Las Vegas";grid-column:1/-1;justify-self:start;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--surface);background:var(--accent);padding:2px 10px;border-radius:999px}
+
+.events{list-style:none;margin:0;padding:0}
+.ev{display:grid;grid-template-columns:112px 1fr;gap:18px;padding-block:16px;border-bottom:1px solid var(--line)}
+.ev:last-child{border-bottom:0}
+.time{font-variant-numeric:tabular-nums;font-weight:600;font-size:14.5px;color:var(--accent);padding-top:2px}
+.body{min-width:0;display:grid;gap:6px}
+.head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.head h3{font-size:16.5px;font-weight:600}
+.sub{margin:0;color:var(--muted);font-size:14px}
+.ev.quiet{padding-block:10px}
+.ev.quiet h3{font-weight:500;color:var(--muted);font-size:15px}
+.checks{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:5px;font-size:14px}
+.checks li{position:relative;padding-left:20px}
+.checks li::before{content:"";position:absolute;left:3px;top:.55em;width:8px;height:8px;border:1.5px solid var(--accent);border-radius:2px}
+.contact{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:6px;padding:8px 12px;background:var(--accent-soft);border-radius:8px;font-size:13.5px}
+.cname{font-weight:500}
+.phone{font-weight:600;font-variant-numeric:tabular-nums;user-select:all;color:var(--ink)}
+.copy{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:6px;padding:1px 8px;cursor:pointer}
+.copy:hover{background:var(--surface)}
+.copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Group dates + contacts */
+.section{padding-block:36px 0}
+.section h2{font-family:var(--display);font-weight:500;font-size:24px;margin-bottom:6px}
+.section > p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.contacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:2px;min-width:0}
+.card .role{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.card .who{font-weight:600}
+.card .org{font-size:13.5px;color:var(--muted)}
+.card .line{display:flex;gap:10px;align-items:center;margin-top:4px}
+
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+footer a{color:var(--accent)}
+
+@media (max-width:560px){
+  .ev{grid-template-columns:1fr;gap:4px}
+  .dayhead{grid-template-columns:1fr;gap:6px}
+  .dh-meta{justify-items:start;text-align:left}
+  .attn{padding:16px}
+  .attn li{grid-template-columns:1fr;gap:4px}
+  .attn li .tag{justify-self:start}
+}
+@media print{
+  @page{size:A4;margin:14mm 13mm 16mm}
+  :root,:root[data-theme="dark"]{
+    --bg:#FFFFFF; --surface:#FFFFFF; --ink:#1E2D33; --muted:#566870; --line:#D6DFE0;
+    --accent:#3B7880; --accent-soft:#E8F1F2;
+    --ok:#2C7656; --ok-bg:#E1F0E7; --wait:#94640F; --wait-bg:#FAEFD8;
+    --flag:#9C4537; --flag-bg:#F7E5E0; color-scheme:light}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:12px;padding:0}
+  .wrap{max-width:none}
+  .strip,.copy{display:none}
+  .top{padding-block:0 12px}
+  .top h1{font-size:30px}
+  .top .dates{font-size:14px}
+  .facts{grid-template-columns:repeat(4,1fr);gap:8px;margin-block:4px 14px}
+  .fact{padding:9px 11px;border-radius:8px}
+  .fact .v{font-size:13px}.fact .s{font-size:11.5px}
+  .attn{padding:12px 14px;margin-bottom:6px;border-radius:10px;break-inside:avoid}
+  .attn h2{font-size:17px}
+  .attn li{font-size:11.5px;grid-template-columns:76px 1fr}
+  .attn ol{gap:6px}
+  .attn > p{margin-bottom:8px}
+  .day{padding-block:12px 0}
+  #sat,#sun,#mon,#tue,#wed{break-before:page}
+  .dayhead{break-after:avoid}
+  .dayhead::after{display:none!important}
+  .dt{font-size:22px}
+  .ev{grid-template-columns:92px 1fr;gap:14px;padding-block:6px;break-inside:avoid}
+  .ev.quiet{padding-block:4px}
+  .body{gap:3px}
+  .head h3{font-size:13.5px}
+  .sub,.checks{font-size:11.5px}
+  .checks{gap:1px;margin-top:1px}
+  .dayhead{padding-bottom:8px}
+  .contact{font-size:11.5px;padding:5px 10px;margin-top:3px}
+  .section{padding-block:18px 0;break-before:page}
+  section[aria-labelledby="ct-h"]{break-before:auto}
+  .section h2{font-size:19px}
+  .tablewrap{overflow:visible}
+  table{min-width:0;font-size:11.5px}
+  th,td{padding:7px 10px}
+  .contacts{grid-template-columns:repeat(3,1fr);gap:7px}
+  .card{padding:8px 10px;break-inside:avoid;font-size:11.5px}
+  .card .org{font-size:11px}
+  footer{margin-top:18px;font-size:10.5px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Site inspection itinerary</span>
+    <h1>Las Vegas Site Inspection</h1>
+    <div class="dates"><b>9–15 October 2026</b> · return to Tel Aviv 17 October</div>
+  </header>
+
+  <div class="facts">
+    <div class="fact"><span class="k">Hotel</span><span class="v">The LINQ Hotel</span><span class="s">3535 Las Vegas Blvd South<br>Check-in Fri 9 Oct, late night</span></div>
+    <div class="fact"><span class="k">Outbound</span><span class="v">UA 085 · UA 1283</span><span class="s">TLV 11:00 → EWR → LAS 22:57</span></div>
+    <div class="fact"><span class="k">Return</span><span class="v">UA 406 · UA 084</span><span class="s">LAS 23:59 Thu → EWR → TLV Sat 08:55</span></div>
+    <div class="fact"><span class="k">Time &amp; status</span><span class="v">Vegas is 10 h behind Israel</span><div class="tally"><span class="pill ok">6 confirmed</span><span class="pill wait">9 pending</span></div></div>
+  </div>
+
+  <section class="attn" aria-labelledby="attn-h">
+    <h2 id="attn-h">Check before and during the trip</h2>
+    <p>Points from the schedule that need an answer, plus one venue change found online.</p>
+    <ol>
+      <li><span class="tag flag">Venue</span><span><b>XS is closed for renovation until Thu 5 Nov 2026.</b> Monday's walk-through will be on a renovation site. Confirm access with Kevin Haz and ask for the new floor plan of the Side Stage Patio. Reopening weekend is 5–8 Nov; Sun 8 Nov is Diplo B2B Hugel.</span></li>
+      <li><span class="tag flag">Clash</span><span><b>The Sphere:</b> the Tue 13 Oct 15:00 option overlaps the Wynn inspection (12:00–15:30). Lock in Mon 12 Oct 15:00.</span></li>
+      <li><span class="tag flag">Hours</span><span><b>Burnt Offerings</b> (Sun 13:00) opens at 17:00 on Sundays, and <b>Galilee</b> (Sun 14:30) lists no Sunday hours. Confirm both owners will open for the visit.</span></li>
+      <li><span class="tag pay">Payment</span><span><b>Chica:</b> deposit deadline is Tue 13 Oct, the day of the visit. Bring the countersigned contract and bank details.</span></li>
+      <li><span class="tag pay">Payment</span><span><b>Omnia:</b> waiting for the 20% deposit link, bank details and pro-forma invoice. <b>XS:</b> payment in process.</span></li>
+      <li><span class="tag tba">Open</span><span>Meeting point with Yehuda (Sat), breakfast venues, and dinners on Mon 12 and Wed 14 Oct are still TBA.</span></li>
+      <li><span class="tag tba">Open</span><span>Departure day: transfer is at 22:00. Arrange late check-out or luggage storage at The LINQ.</span></li>
+    </ol>
+  </section>
+
+  <div class="strip"><nav aria-label="Days"><a href="#fri" data-day="fri"><b>Fri</b><span>9</span></a><a href="#sat" data-day="sat"><b>Sat</b><span>10</span></a><a href="#sun" data-day="sun"><b>Sun</b><span>11</span></a><a href="#mon" data-day="mon"><b>Mon</b><span>12</span></a><a href="#tue" data-day="tue"><b>Tue</b><span>13</span></a><a href="#wed" data-day="wed"><b>Wed</b><span>14</span></a><a href="#thu" data-day="thu"><b>Thu</b><span>15</span></a><a href="#home" data-day="home"><b>Home</b><span>16–17</span></a></nav></div>
+
+  <section class="day" id="fri" data-date="9 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Friday</span><span class="dt">9 October</span></div><div class="dh-meta"><h2>Travel day</h2><span class="where">Tel Aviv → Newark → Las Vegas</span></div></header>
+  <ol class="events"><li class="ev"><div class="time">11:00</div><div class="body"><div class="head"><h3>Flight to Newark</h3><span class="pill ok">Confirmed</span></div><p class="sub">United UA 085</p></div></li><li class="ev"><div class="time">15:50</div><div class="body"><div class="head"><h3>Land at Newark (EWR)</h3><span class="pill ok">Confirmed</span></div><p class="sub">Terminal C</p></div></li><li class="ev"><div class="time">20:21</div><div class="body"><div class="head"><h3>Flight to Las Vegas</h3><span class="pill ok">Confirmed</span></div><p class="sub">United UA 1283 · departs Terminal A</p></div></li><li class="ev"><div class="time">22:57</div><div class="body"><div class="head"><h3>Land at Las Vegas (LAS)</h3><span class="pill ok">Confirmed</span></div><p class="sub">Terminal 3</p></div></li><li class="ev"><div class="time">23:45</div><div class="body"><div class="head"><h3>Transfer &amp; check-in: The LINQ Hotel</h3><span class="pill ok">Confirmed</span></div><p class="sub">3535 Las Vegas Blvd South, Las Vegas, NV 89109</p></div></li></ol>
+</section>
+<section class="day" id="sat" data-date="10 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Saturday</span><span class="dt">10 October</span></div><div class="dh-meta"><h2>Wynn &amp; surroundings</h2><span class="where">Wynn Las Vegas</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">09:00</div><div class="body"><div class="head"><h3>Breakfast</h3></div><p class="sub">Location TBA</p></div></li><li class="ev"><div class="time">10:00–13:00</div><div class="body"><div class="head"><h3>Meeting with Yehuda, local guide</h3><span class="pill wait">Pending</span></div><p class="sub">Meeting point TBA</p><ul class="checks"><li>Responsible for the kosher group on Day 1</li><li>Escorts guests from drop-off / pick-up point to each venue and activity</li></ul><div class="contact"><span class="cname">Yehuda · Local guide</span><span class="phone" tabindex="0">(702) 759-6059</span><button class="copy" type="button" data-copy="(702) 759-6059" aria-label="Copy (702) 759-6059">Copy</button></div></div></li><li class="ev"><div class="time">13:00–15:00</div><div class="body"><div class="head"><h3>Wynn Hotel: general walkthrough</h3></div><p class="sub">Restaurants: Allegro, The Buffet, Cipriani</p><ul class="checks"><li>Wynn gift cards: valid at all Wynn-owned restaurants, retail, golf course, Wynn &amp; Encore Spa, and hotel charges incl. incidentals at checkout</li><li>Gift-card purchasing procedure: Concierge Desk / Front Desk</li><li>XS Nightclub area</li></ul></div></li><li class="ev"><div class="time">15:00–16:00</div><div class="body"><div class="head"><h3>Lunch near the hotel</h3></div><p class="sub">TBA, or The Buffet at Wynn</p><ul class="checks"><li>Gourmet Brunch daily 8:00–13:00</li><li>Seafood Gourmet Dinner daily 13:00–21:00</li></ul><div class="contact"><span class="cname">The Buffet at Wynn</span><span class="phone" tabindex="0">(702) 770-3340</span><button class="copy" type="button" data-copy="(702) 770-3340" aria-label="Copy (702) 770-3340">Copy</button></div></div></li><li class="ev"><div class="time">16:00–19:00</div><div class="body"><div class="head"><h3>Wynn surroundings on foot</h3></div><p class="sub">Everyday services near the hotel</p><ul class="checks"><li>Sundries Wynn (convenience) · 3131 Las Vegas Blvd S</li><li>Walgreens (pharmacy) · 3025 Las Vegas Blvd S</li><li>Target / Walmart</li><li>CVS (pharmacy) · 3300 Las Vegas Blvd S</li><li>7-Eleven · 3300 Las Vegas Blvd S</li><li>Walking distance to Chica and to the Sphere</li></ul><div class="contact"><span class="phone" tabindex="0">(702) 836-0820</span><button class="copy" type="button" data-copy="(702) 836-0820" aria-label="Copy (702) 836-0820">Copy</button></div></div></li><li class="ev"><div class="time">19:00–21:00</div><div class="body"><div class="head"><h3>Dinner at Allegro, Wynn</h3></div><p class="sub">Fri–Sat 16:00–02:00 · Sun–Thu 17:00–24:00</p><div class="contact"><span class="cname">Allegro</span><span class="phone" tabindex="0">(702) 770-2040</span><button class="copy" type="button" data-copy="(702) 770-2040" aria-label="Copy (702) 770-2040">Copy</button></div></div></li></ol>
+</section>
+<section class="day" id="sun" data-date="11 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Sunday</span><span class="dt">11 October</span></div><div class="dh-meta"><h2>Kosher suppliers &amp; restaurants</h2><span class="where">West Las Vegas</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">09:00</div><div class="body"><div class="head"><h3>Breakfast</h3></div><p class="sub">Wynn Hotel · TBA</p></div></li><li class="ev"><div class="time">10:00–13:00</div><div class="body"><div class="head"><h3>Kosher suppliers inspection</h3></div><p class="sub">Two kosher markets</p><ul class="checks"><li>One Stop Kosher Market · 3655 S Rainbow Blvd #104, NV 89103 · (702) 405-7724</li><li>Kosher Market · 2521 S Fort Apache Rd, NV 89117 · (725) 205-3005</li></ul><div class="contact"><span class="cname">One Stop Kosher Market</span><span class="phone" tabindex="0">(702) 405-7724</span><button class="copy" type="button" data-copy="(702) 405-7724" aria-label="Copy (702) 405-7724">Copy</button></div></div></li><li class="ev"><div class="time">13:00–14:00</div><div class="body"><div class="head"><h3>Burnt Offerings: restaurant visit</h3><span class="pill wait">Pending</span></div><p class="sub">3909 W Sahara Ave, Suite 10, NV 89102</p><ul class="checks"><li>For: group dinner Sun 8 Nov, 20:30 · 24–25 guests</li><li>Check seating area and set-up, menu tasting, table decoration</li><li>Coach access for direct pick-up and drop-off</li><li>Hours: Sun–Thu 17:00–22:00 · Fri 11:30–14:00 · Sat closed</li></ul><div class="contact"><span class="cname">Alexandra Emtsova · Owner &amp; Operator</span><span class="phone" tabindex="0">(315) 580-2464</span><button class="copy" type="button" data-copy="(315) 580-2464" aria-label="Copy (315) 580-2464">Copy</button></div></div></li><li class="ev"><div class="time">14:30–15:30</div><div class="body"><div class="head"><h3>Galilee Mediterranean Grill: visit</h3><span class="pill wait">Pending</span></div><p class="sub">2101 S Decatur Blvd #10, NV 89102</p><ul class="checks"><li>For: group dinner Sun 8 Nov, 20:30 (24–25 guests) or Tue 10 Nov</li><li>Check seating area and set-up, menu tasting, table decoration</li><li>Coach access for direct pick-up and drop-off</li><li>Hours: Mon–Thu 11:00–19:00 · Fri 10:00–13:00 · restaurant (702) 476-9931</li></ul><div class="contact"><span class="cname">Shachar</span><span class="phone" tabindex="0">(725) 290-4864</span><button class="copy" type="button" data-copy="(725) 290-4864" aria-label="Copy (725) 290-4864">Copy</button></div></div></li><li class="ev"><div class="time">16:00–19:00</div><div class="body"><div class="head"><h3>Jerusalem Restaurant: visit &amp; dinner</h3></div><p class="sub">4825 W Flamingo Rd, Suite 10, NV 89103</p><ul class="checks"><li>For: group dinner Mon 9 Nov, 20:30 / 21:00 · 63 guests</li><li>Confirm availability, seating area, table set-up</li><li>Service style: family style, plenty of food</li><li>Optional music / performance; tasting sample for groups</li><li>Hours: Sun–Thu 16:00–23:00 · Fri 09:30–14:00 · Sat private events only</li></ul><div class="contact"><span class="cname">Jerusalem Restaurant</span><span class="phone" tabindex="0">(702) 341-5555</span><button class="copy" type="button" data-copy="(702) 341-5555" aria-label="Copy (702) 341-5555">Copy</button></div></div></li></ol>
+</section>
+<section class="day" id="mon" data-date="12 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Monday</span><span class="dt">12 October</span></div><div class="dh-meta"><h2>DMC logistics, Sphere &amp; XS</h2><span class="where">Strip &amp; outlets</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">09:00</div><div class="body"><div class="head"><h3>Breakfast</h3></div><p class="sub">Wynn Hotel · TBA</p></div></li><li class="ev"><div class="time">10:00–14:00</div><div class="body"><div class="head"><h3>Meeting with Desiree, DMC</h3><span class="pill wait">Pending</span></div><p class="sub">Escalante Inc. · logistics walk-through</p><ul class="checks"><li>Drop-off and pick-up points for all days</li><li>Shopping: North Premium Outlets, stop at Fashion Show Mall</li><li>Walk through challenging venues: the Sphere, Omnia</li><li>Party bus program: hostess, music, kosher refreshments, route, photo stop / group photo at the Las Vegas sign</li><li>Additional operations staff</li><li>Limousine, luggage truck and porterage</li><li>Water on coaches; helicopter transfers; departure transfer (guest count and luggage)</li></ul><div class="contact"><span class="cname">Desiree Stokes Blum · Escalante Inc. · SMS/WhatsApp 24/7</span><span class="phone" tabindex="0">+1 (702) 875-5960</span><button class="copy" type="button" data-copy="+1 (702) 875-5960" aria-label="Copy +1 (702) 875-5960">Copy</button></div></div></li><li class="ev"><div class="time">14:00–15:00</div><div class="body"><div class="head"><h3>Lunch</h3></div><p class="sub">TBA: near the Sphere, Pampas or Mama Mia</p></div></li><li class="ev"><div class="time">15:00–18:00</div><div class="body"><div class="head"><h3>The Sphere</h3><span class="pill wait">Pending</span></div><p class="sub">255 Sands Ave, NV 89169 · (725) 258-0001</p><ul class="checks"><li>Visit slot: Mon 12 Oct ~15:00 (preferred) or Tue 13 Oct ~15:00</li><li>VIP experience, event timeline, entrance procedure</li><li>VIP hostess welcome and contact person</li><li>Refreshment details</li><li>Ticket collection and distribution</li><li>Coach access</li><li>Group meeting point on arrival, and exit to the party bus</li></ul><div class="contact"><span class="cname">Leo Cusumano · Manager, Group Sales</span><span class="phone" tabindex="0">(725) 309-0156</span><button class="copy" type="button" data-copy="(725) 309-0156" aria-label="Copy (725) 309-0156">Copy</button></div></div></li><li class="ev"><div class="time">18:00–19:00</div><div class="body"><div class="head"><h3>XS Nightclub, Wynn &amp; Encore</h3><span class="pill wait">Pending</span></div><p class="sub">3131 Las Vegas Blvd S, NV 89109</p><ul class="checks"><li>Venue is under renovation; reopens Thu 5 Nov 2026</li><li>VIP experience, event timeline, entrance procedure</li><li>VIP hostess welcome and contact person</li><li>Refreshments: ask if snacks are allowed</li><li>Ticket collection and distribution</li><li>Meeting point for kosher guests arriving from dinner; VIP entrance</li><li>Walking route to Wynn guest rooms and Allegro</li><li>Reserved tables: full Side Stage Patio, $19,000 minimum spend, incl. 3 large side-stage tables</li><li>Rest of group dines at the hotel · payment in process</li></ul><div class="contact"><span class="cname">Kevin Haz · Host Manager, XS / EBC / Wynnfield</span><span class="phone" tabindex="0">(808) 635-3692</span><button class="copy" type="button" data-copy="(808) 635-3692" aria-label="Copy (808) 635-3692">Copy</button></div></div></li><li class="ev"><div class="time">20:00</div><div class="body"><div class="head"><h3>Dinner</h3></div><p class="sub">TBA: near the Sphere, Pampas, Mama Mia, or Burnt tasting</p></div></li></ol>
+</section>
+<section class="day" id="tue" data-date="13 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Tuesday</span><span class="dt">13 October</span></div><div class="dh-meta"><h2>Omnia, Wynn &amp; Chica</h2><span class="where">Caesars · Wynn · Venetian</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">09:00</div><div class="body"><div class="head"><h3>Breakfast</h3></div><p class="sub">Wynn Hotel · TBA</p></div></li><li class="ev"><div class="time">10:00–11:30</div><div class="body"><div class="head"><h3>Omnia Nightclub: daytime walk-through</h3><span class="pill wait">Pending</span></div><p class="sub">Caesars Palace · 3570 S Las Vegas Blvd, NV 89109</p><ul class="checks"><li>For: Tue 10 Nov 2026 · 63 guests · Balcony, $8,500 minimum spend</li><li>Tables: 1 Skybox + 2 large balcony + 1 small balcony</li><li>VIP experience, group timeline, entrance for the group and for late arrivals</li><li>VIP hostess welcome and contact person; ticket distribution</li><li>Group meeting point on arrival, 23:30–24:00</li><li>Check reserved tables; scout late-dinner options nearby</li><li>Open Tue &amp; Thu–Sun from 22:30 · (702) 785-6200</li><li>Pending: 20% deposit link, bank-transfer details, pro-forma invoice</li></ul><div class="contact"><span class="cname">Caitlin Venit &amp; Dora B. · Concierge Supervisors</span><span class="phone" tabindex="0">(702) 850-2757</span><button class="copy" type="button" data-copy="(702) 850-2757" aria-label="Copy (702) 850-2757">Copy</button></div></div></li><li class="ev"><div class="time">12:00–15:30</div><div class="body"><div class="head"><h3>Wynn Hotel inspection</h3></div><p class="sub">Departments to meet</p><ul class="checks"><li>Front Desk: group check-in</li><li>Concierge: gift cards</li><li>Allegro: group dinner on arrival</li><li>Room service: in-room amenities before check-in</li><li>Guest Relations: contact person for groups</li></ul></div></li><li class="ev"><div class="time">16:30–18:30</div><div class="body"><div class="head"><h3>Dinner at Chica</h3><span class="pill ok">Confirmed</span></div><p class="sub">The Venetian · 3355 S Las Vegas Blvd, Ste 106, NV 89109</p><ul class="checks"><li>Menu tasting, seating area, catering timeline</li><li>Kosher service: selected kosher and regular menus, extra items</li><li>Meet the kosher caterer: kosher wine, sharing-style service with heating, plating and kosher cutlery</li><li>Entertainment and existing décor</li><li>Bring countersigned contract and bank details; deposit due today, 13 Oct</li></ul><div class="contact"><span class="cname">Christine Olivo · Director of Event Sales</span><span class="phone" tabindex="0">(702) 224-2343</span><button class="copy" type="button" data-copy="(702) 224-2343" aria-label="Copy (702) 224-2343">Copy</button></div></div></li><li class="ev"><div class="time">23:30</div><div class="body"><div class="head"><h3>Omnia Nightclub: live night</h3><span class="pill wait">Pending</span></div><p class="sub">Experience the club atmosphere</p></div></li></ol>
+</section>
+<section class="day" id="wed" data-date="14 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Wednesday</span><span class="dt">14 October</span></div><div class="dh-meta"><h2>Helicopter &amp; general inspection</h2><span class="where">Strip · Maverick</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">09:00</div><div class="body"><div class="head"><h3>Breakfast</h3></div></div></li><li class="ev"><div class="time">10:00–13:00</div><div class="body"><div class="head"><h3>General inspection</h3></div><p class="sub">Suppliers and shopping</p><ul class="checks"><li>Jerusalem catering</li><li>Lunch at Superfrico or Pampas</li><li>Kosher breakfast and lunch-box provider</li><li>Zoox robotaxi (check at MGM)</li><li>Premium outlets and Fashion Show Mall</li></ul></div></li><li class="ev"><div class="time">15:00–18:30</div><div class="body"><div class="head"><h3>Maverick Helicopters: Wind Dancer sunset</h3><span class="pill wait">Pending</span></div><p class="sub">6075 Las Vegas Blvd S</p><ul class="checks"><li>Timeline, pre-flight briefing, finish point</li><li>Refreshments, incl. kosher; ask about upgrades</li><li>Group photo location; optional branding</li><li>Pre-assigned seating</li><li>9 private helicopters: can guests be switched between aircraft for no-shows? Empty seats cannot be reallocated</li></ul><div class="contact"><span class="cname">Marie Buch · Group Services Manager</span><span class="phone" tabindex="0">(702) 948-1317</span><button class="copy" type="button" data-copy="(702) 948-1317" aria-label="Copy (702) 948-1317">Copy</button></div></div></li><li class="ev"><div class="time">19:30</div><div class="body"><div class="head"><h3>Dinner</h3></div><p class="sub">TBA</p></div></li><li class="ev quiet"><div class="time">Evening</div><div class="body"><div class="head"><h3>Free time</h3></div></div></li></ol>
+</section>
+<section class="day" id="thu" data-date="15 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Thursday</span><span class="dt">15 October</span></div><div class="dh-meta"><h2>Departure</h2><span class="where">Las Vegas → Newark</span></div></header>
+  <ol class="events"><li class="ev quiet"><div class="time">Day</div><div class="body"><div class="head"><h3>Free time</h3></div></div></li><li class="ev"><div class="time">—</div><div class="body"><div class="head"><h3>Hotel check-out</h3></div><p class="sub">Arrange late check-out or luggage storage</p></div></li><li class="ev"><div class="time">22:00</div><div class="body"><div class="head"><h3>Transfer to LAS airport</h3></div></div></li><li class="ev"><div class="time">23:59</div><div class="body"><div class="head"><h3>Flight to Newark</h3></div><p class="sub">United UA 406</p></div></li></ol>
+</section>
+<section class="day" id="home" data-date="16–17 October">
+  <header class="dayhead"><div class="dh-date"><span class="dow">Fri–Sat</span><span class="dt">16–17 October</span></div><div class="dh-meta"><h2>Return home</h2><span class="where">Newark → Tel Aviv</span></div></header>
+  <ol class="events"><li class="ev"><div class="time">Fri 07:51</div><div class="body"><div class="head"><h3>Land at Newark (EWR)</h3></div><p class="sub">Terminal C</p></div></li><li class="ev"><div class="time">Fri 15:25</div><div class="body"><div class="head"><h3>Flight to Tel Aviv</h3></div><p class="sub">United UA 084</p></div></li><li class="ev"><div class="time">Sat 08:55</div><div class="body"><div class="head"><h3>Land at Tel Aviv (TLV)</h3></div></div></li></ol>
+</section>
+
+  <section class="section" aria-labelledby="grp-h">
+    <h2 id="grp-h">Group program dates in November</h2>
+    <p>The bookings this inspection is preparing for, as listed in the schedule.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Date</th><th>Venue</th><th>Guests</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td class="num">Sun 8 Nov · 20:30</td><td>Burnt Offerings or Galilee</td><td class="num">24–25</td><td>Group dinner (kosher)</td></tr>
+        <tr><td class="num">Mon 9 Nov · 20:30 / 21:00</td><td>Jerusalem Restaurant</td><td class="num">63</td><td>Family-style dinner, optional music</td></tr>
+        <tr><td class="num">Tue 10 Nov · 23:30</td><td>Omnia, Caesars Palace</td><td class="num">63</td><td>Balcony: Skybox + 3 balcony tables · $8,500 min. spend</td></tr>
+        <tr><td class="num">Tue 10 Nov</td><td>Galilee (alternative)</td><td class="num">24–25</td><td>Alternative date for the small-group dinner</td></tr>
+        <tr><td class="num">Date TBC</td><td>XS, Wynn</td><td class="num">—</td><td>Full Side Stage Patio · $19,000 min. spend</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="section" aria-labelledby="ct-h">
+    <h2 id="ct-h">Contacts</h2>
+    <p>All numbers are US unless shown otherwise.</p>
+    <div class="contacts">
+      <div class="card"><span class="role">DMC</span><span class="who">Desiree Stokes Blum</span><span class="org">Escalante Inc. · SMS / WhatsApp 24/7</span><div class="line"><span class="phone">+1 (702) 875-5960</span><button class="copy" type="button" data-copy="+1 702 875 5960">Copy</button></div></div>
+      <div class="card"><span class="role">Local guide</span><span class="who">Yehuda</span><span class="org">Kosher group escort</span><div class="line"><span class="phone">(702) 759-6059</span><button class="copy" type="button" data-copy="702 759 6059">Copy</button></div></div>
+      <div class="card"><span class="role">Restaurant</span><span class="who">Christine Olivo</span><span class="org">Chica, The Venetian · Director of Event Sales</span><div class="line"><span class="phone">(702) 224-2343</span><button class="copy" type="button" data-copy="702 224 2343">Copy</button></div></div>
+      <div class="card"><span class="role">Restaurant</span><span class="who">Alexandra Emtsova</span><span class="org">Burnt Offerings · Owner &amp; Operator</span><div class="line"><span class="phone">(315) 580-2464</span><button class="copy" type="button" data-copy="315 580 2464">Copy</button></div></div>
+      <div class="card"><span class="role">Restaurant</span><span class="who">Shachar</span><span class="org">Galilee Mediterranean Grill</span><div class="line"><span class="phone">(725) 290-4864</span><button class="copy" type="button" data-copy="725 290 4864">Copy</button></div></div>
+      <div class="card"><span class="role">Restaurant</span><span class="who">Jerusalem Restaurant</span><span class="org">4825 W Flamingo Rd, Suite 10</span><div class="line"><span class="phone">(702) 341-5555</span><button class="copy" type="button" data-copy="702 341 5555">Copy</button></div></div>
+      <div class="card"><span class="role">Venue</span><span class="who">Leo Cusumano</span><span class="org">The Sphere · Manager, Group Sales</span><div class="line"><span class="phone">(725) 309-0156</span><button class="copy" type="button" data-copy="725 309 0156">Copy</button></div></div>
+      <div class="card"><span class="role">Nightclub</span><span class="who">Kevin Haz</span><span class="org">XS / EBC / Wynnfield · Host Manager</span><div class="line"><span class="phone">(808) 635-3692</span><button class="copy" type="button" data-copy="808 635 3692">Copy</button></div></div>
+      <div class="card"><span class="role">Nightclub</span><span class="who">Caitlin Venit · Dora B.</span><span class="org">Omnia · Concierge Supervisors</span><div class="line"><span class="phone">(702) 850-2757</span><button class="copy" type="button" data-copy="702 850 2757">Copy</button></div></div>
+      <div class="card"><span class="role">Activity</span><span class="who">Marie Buch</span><span class="org">Maverick Helicopters · Group Services Manager</span><div class="line"><span class="phone">(702) 948-1317</span><button class="copy" type="button" data-copy="702 948 1317">Copy</button></div></div>
+      <div class="card"><span class="role">Activity</span><span class="who">Moon Civetz, CMP</span><span class="org">Maverick Helicopters · VP Global Group Sales · office (702) 948-1311</span><div class="line"><span class="phone">(702) 604-3684</span><button class="copy" type="button" data-copy="702 604 3684">Copy</button></div></div>
+      <div class="card"><span class="role">Kosher supply</span><span class="who">One Stop Kosher Market</span><span class="org">3655 S Rainbow Blvd #104</span><div class="line"><span class="phone">(702) 405-7724</span><button class="copy" type="button" data-copy="702 405 7724">Copy</button></div></div>
+    </div>
+  </section>
+
+  <footer>
+    Built from the Site Inspection Schedule updated 8 Oct 2026. XS reopening date from the <a href="https://www.newsroom.wynnresorts.com/en/wynnlasvegas/xs-nightclub-at-wynn-las-vegas-announces-grand-reopening-with-a-reimagined-venue-and-iconic-lineup-o/s/b01484fc-21cd-4250-a9a2-616bd007e7dd" target="_blank" rel="noopener">Wynn Las Vegas press release</a>, 18 Aug 2026.
+  </footer>
+</div>
+
+<script>
+(function(){
+  // Copy buttons
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var v = btn.getAttribute('data-copy'), done = function(){ var t=btn.textContent; btn.textContent='Copied'; setTimeout(function(){btn.textContent=t;},1400); };
+      try{
+        navigator.clipboard.writeText(v).then(done, function(){ selectNear(btn); });
+      }catch(e){ selectNear(btn); }
+    });
+  });
+  function selectNear(btn){
+    var p = btn.parentNode.querySelector('.phone'); if(!p) return;
+    var r = document.createRange(); r.selectNodeContents(p);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  // Highlight today (Las Vegas time)
+  try{
+    var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date());
+    var y,m,d; parts.forEach(function(p){ if(p.type==='year')y=+p.value; if(p.type==='month')m=+p.value; if(p.type==='day')d=+p.value; });
+    var map = {9:'fri',10:'sat',11:'sun',12:'mon',13:'tue',14:'wed',15:'thu',16:'home',17:'home'};
+    if(y===2026 && m===10 && map[d]){
+      var id = map[d];
+      var a = document.querySelector('.strip a[data-day="'+id+'"]'); if(a) a.classList.add('today');
+      var sec = document.getElementById(id); if(sec) sec.classList.add('is-today');
+    }
+  }catch(e){}
+})();
+</script>
